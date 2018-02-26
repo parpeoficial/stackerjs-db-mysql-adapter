@@ -1,0 +1,48 @@
+{
+    "name": "stackerjs-db-mysql-adapter",
+    "version": "0.1.0",
+    "author": {
+        "name": "Vinicius Guedes",
+        "email": "viniciusgued@gmail.com",
+        "url": "https://vinyguedess.github.io"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/vinyguedess/stackerjs-db-mysql-adapter"
+    },
+    "main": "lib/index.js",
+
+    "dependencies": {
+        "babel-polyfill": "^6.26.0",
+        "stackerjs-types": "^1.0.2",
+        "stackerjs-utils": "^1.0.2"
+    },
+    "devDependencies": {
+        "babel-cli": "^6.26.0",
+        "babel-core": "^6.26.0",
+        "babel-plugin-istanbul": "^4.1.5",
+        "babel-preset-env": "^1.6.1",
+        "babel-register": "^6.26.0",
+        "chai": "^4.1.2",
+        "mocha": "^5.0.1",
+        "nyc": "^11.4.1"
+    },
+    
+    "nyc": {
+        "exclude": [
+            "lib"
+        ],
+        "require": [
+            "babel-register",
+            "babel-polyfill"
+        ],
+        "reporter": [
+            "lcov",
+            "text"
+        ]
+    },
+    "scripts": {
+        "build": "./node_modules/.bin/babel src -d lib",
+        "test": "./node_modules/.bin/nyc ./node_modules/mocha/bin/_mocha"
+    }
+}
