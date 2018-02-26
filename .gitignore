@@ -1,4 +1,5 @@
 # App files and folders
+/.env
 /.nyc_output
 /coverage
 /lib

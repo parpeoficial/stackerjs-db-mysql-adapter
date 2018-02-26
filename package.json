@@ -11,9 +11,9 @@
         "url": "https://github.com/parpeoficial/stackerjs-db-mysql-adapter"
     },
     "main": "lib/index.js",
-
     "dependencies": {
         "babel-polyfill": "^6.26.0",
+        "mysql": "^2.15.0",
         "stackerjs-types": "^1.0.2",
         "stackerjs-utils": "^1.0.2"
     },
@@ -27,7 +27,6 @@
         "mocha": "^5.0.1",
         "nyc": "^11.4.1"
     },
-    
     "nyc": {
         "exclude": [
             "lib"
