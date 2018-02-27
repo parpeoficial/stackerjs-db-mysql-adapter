@@ -1,5 +1,4 @@
 import { QueryBuilderQueries } from "./QueryBuilderQueries";
-import { treatValue } from "../Utils";
 
 
 export class QueryBuilderUpdate extends QueryBuilderQueries
@@ -9,7 +8,7 @@ export class QueryBuilderUpdate extends QueryBuilderQueries
     {
         return `UPDATE ${this.tableName} SET ` +
             Object.keys(this.fields)
-                .map(field => `${field} = ${treatValue(this.fields[field])}`)
+                .map(field => `${field} = ${this.fields[field]}`)
                 .join(', ') +
             (this._where ? ` WHERE ${this._where}` : '') +
             ';';

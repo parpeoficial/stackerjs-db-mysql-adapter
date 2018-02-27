@@ -1,5 +1,4 @@
 import { QueryBuilderQueries } from './QueryBuilderQueries';
-import { treatValue } from '../Utils';
 
 
 export class QueryBuilderInsert extends QueryBuilderQueries
@@ -11,7 +10,7 @@ export class QueryBuilderInsert extends QueryBuilderQueries
             Object.keys(this.fields).map(field => field).join(', ') +
         ') VALUES (' +
             Object.keys(this.fields)
-                .map(field => treatValue(this.fields[field])).join(', ') + 
+                .map(field => this.fields[field]).join(', ') + 
         ');';
     }
 

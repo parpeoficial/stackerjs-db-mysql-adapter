@@ -7,44 +7,38 @@ export class QueryCriteria
 
     like(field, value)
     {
-        value = treatValue(value.indexOf('%') >= 0 ? value : `%${value}%`);
-        return `${parseFieldAndTable(field)} LIKE ${value}`;   
+        value = value.indexOf('%') >= 0 ? value : `%${treatValue(value)}%`;
+        return `${parseFieldAndTable(field)} LIKE ${treatValue(value)}`;   
     }
 
     eq(field, value)
     {
-        value = treatValue(value);
-        return `${parseFieldAndTable(field)} = ${value}`;
+        return `${parseFieldAndTable(field)} = ${treatValue(value)}`;
     }
 
     neq(field, value)
     {
-        value = treatValue(value);
-        return `${parseFieldAndTable(field)} <> ${value}`;
+        return `${parseFieldAndTable(field)} <> ${treatValue(value)}`;
     }
 
     lt(field, value)
     {
-        value = treatValue(value);
-        return `${parseFieldAndTable(field)} < ${value}`;
+        return `${parseFieldAndTable(field)} < ${treatValue(value)}`;
     }
 
     lte(field, value)
     {
-        value = treatValue(value);
-        return `${parseFieldAndTable(field)} <= ${value}`;
+        return `${parseFieldAndTable(field)} <= ${treatValue(value)}`;
     }
 
     gt(field, value)
     {
-        value = treatValue(value);
-        return `${parseFieldAndTable(field)} > ${value}`;
+        return `${parseFieldAndTable(field)} > ${treatValue(value)}`;
     }
 
     gte(field, value)
     {
-        value = treatValue(value);
-        return `${parseFieldAndTable(field)} >= ${value}`;
+        return `${parseFieldAndTable(field)} >= ${treatValue(value)}`;
     }
 
     andX() 

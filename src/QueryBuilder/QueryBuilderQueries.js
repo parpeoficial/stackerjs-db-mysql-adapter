@@ -1,4 +1,4 @@
-import { parseFilters, parseFieldAndTable } from "../Utils";
+import { parseFilters, parseFieldAndTable, treatValue } from "../Utils";
 
 
 export class QueryBuilderQueries
@@ -29,7 +29,7 @@ export class QueryBuilderQueries
                 .map((field) => this.set(field, fields[field]));
         
         if (typeof fields === 'string')
-            this.fields[parseFieldAndTable(fields)] = value;
+            this.fields[parseFieldAndTable(fields)] = treatValue(value);
 
         return this;
     }
