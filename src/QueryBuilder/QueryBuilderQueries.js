@@ -29,7 +29,7 @@ export class QueryBuilderQueries
                 .map((field) => this.set(field, fields[field]));
         
         if (typeof fields === 'string')
-            this.fields[parseFieldAndTable(fields)] = treatValue(value);
+            this.fields[parseFieldAndTable(fields)] = this.treatValue(value);
 
         return this;
     }
@@ -38,6 +38,11 @@ export class QueryBuilderQueries
     {
         this._where = parseFilters(where);
         return this;
+    }
+
+    treatValue(value)
+    {
+        return treatValue(value);
     }
 
 }
