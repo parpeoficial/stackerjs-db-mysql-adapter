@@ -24,10 +24,10 @@ export class QueryBuilderSelect extends QueryBuilderQueries
             .forEach((key) => {
                 let arg = arguments[key], field;
                 if (typeof arg === 'string')
-                    field = escapeFieldsAndReservedWords(arg);
+                    field = parseFieldAndTable(arg);
 
                 if (Array.isArray(arg))
-                    field = `${escapeFieldsAndReservedWords(arg[0])} AS ${arg[1]}`;
+                    field = `${parseFieldAndTable(arg[0], this.tableName)} AS ${arg[1]}`;
 
                 this.fields.push(parseFieldAndTable(field, this.tableName));
 

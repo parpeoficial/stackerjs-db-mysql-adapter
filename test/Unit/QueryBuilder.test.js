@@ -4,6 +4,7 @@ import { QueryBuilder, QueryCriteria } from './../../lib';
 
 describe('Unit/QueryBuilderTest', () => 
 {
+
     describe('InsertQueryBuilderTest', () => 
     {
         it('Should create query the common way', () => 
@@ -112,7 +113,7 @@ describe('Unit/QueryBuilderTest', () =>
                 .group('table_name.average')
                 .parse()).to.be.equal(
                     'SELECT `table_name`.* FROM table_name ' +
-                    'GROUP BY table_name.average;'
+                    'GROUP BY `table_name`.`average`;'
                 );
         });
 
@@ -149,12 +150,13 @@ describe('Unit/QueryBuilderTest', () =>
                 .select()
                 .from('table_name')
                 .set('*')
-                .where(
-                    criteria.andX(criteria.eq('active', 1), 
-                    criteria.gt('value', 100), criteria.lt('value', 1000))
-                ).parse()).to.be.equal(
+                .where(criteria.andX(
+                    criteria.eq('active', 1), 
+                    criteria.gt('value', 100), 
+                    criteria.lt('value', 1000)
+                )).parse()).to.be.equal(
                     'SELECT `table_name`.* FROM table_name ' +
-                    'WHERE (active = 1 AND value > 100 AND value < 1000);'
+                    'WHERE (`active` = 1 AND `value` > 100 AND `value` < 1000);'
                 );
         });
         
@@ -172,7 +174,7 @@ describe('Unit/QueryBuilderTest', () =>
                     .parse()
             ).to.be.equal(
                 'SELECT * FROM table_name ' +
-                'HAVING active = 0;' 
+                'HAVING `active` = 0;' 
             );
         });
 
@@ -213,7 +215,7 @@ describe('Unit/QueryBuilderTest', () =>
                 .where(criteria.orX(criteria.neq('active', false), criteria.lte('birth_date', new Date('1992-12-30 08:25:01'))))
                 .parse()).to.be.equal(
                     'UPDATE table_name SET `active` = 0 ' +
-                    'WHERE (active <> 0 OR birth_date <= "1992-12-30 08:25:01");'
+                    'WHERE (`active` <> 0 OR `birth_date` <= "1992-12-30 08:25:01");'
                 );
         });
     });
@@ -235,7 +237,20 @@ describe('Unit/QueryBuilderTest', () =>
                 .delete()
                 .from('table_name')
                 .where(criteria.gte('id', 3))
-                .parse()).to.be.equal('DELETE FROM table_name WHERE id >= 3;');
+                .parse()).to.be.equal('DELETE FROM table_name WHERE `id` >= 3;');
+        });
+    });
+
+    describe('Querying with JSON selector', () => 
+    {
+        it('Should make a SELECT query', () => 
+        {
+            expect(new QueryBuilder()
+                .select()
+                .set('person.document.id', 'person->"$.address.city"')
+                .from('table')
+                .parse())
+            .to.be.equal('SELECT person->"$.document.id", person->"$.address.city" FROM table;')
         });
     });
 });
