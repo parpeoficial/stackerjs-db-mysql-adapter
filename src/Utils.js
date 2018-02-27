@@ -2,7 +2,7 @@ import { QueryCriteria } from "./index";
 
 
 
-exports.padString = (text, desiredSize, completeWith = '0') =>
+export const padString = (text, desiredSize, completeWith = '0') =>
 {
     if (text.length < desiredSize) {
         while (text.length < desiredSize)
@@ -13,19 +13,19 @@ exports.padString = (text, desiredSize, completeWith = '0') =>
 }
 
 
-exports.treatValue = (value, treatString = true) =>
+export const treatValue = (value, treatString = true) =>
 {
     if (value instanceof Date)
-        return exports.treatValue([
+        return treatValue([
             [
                 value.getFullYear(),
-                exports.padString((value.getMonth() + 1).toString(), 2),
-                exports.padString(value.getDate().toString(), 2)
+                padString((value.getMonth() + 1).toString(), 2),
+                padString(value.getDate().toString(), 2)
             ].join('-'),
             [
-                exports.padString(value.getHours().toString(), 2),
-                exports.padString(value.getMinutes().toString(), 2),
-                exports.padString(value.getSeconds().toString(), 2)
+                padString(value.getHours().toString(), 2),
+                padString(value.getMinutes().toString(), 2),
+                padString(value.getSeconds().toString(), 2)
             ].join(':')
         ].join(' '), treatString);
 
@@ -49,7 +49,7 @@ exports.treatValue = (value, treatString = true) =>
 }
 
 
-exports.parseFieldAndTable = (fieldName, tableName) =>
+export const parseFieldAndTable = (fieldName, tableName) =>
 {
     let DETECT_FIELD_IS_WRAPPED_BY_FUNCTION = /\([a-z0-9\-\.\_\']+\)/;
     if (DETECT_FIELD_IS_WRAPPED_BY_FUNCTION.test(fieldName))
@@ -65,7 +65,7 @@ exports.parseFieldAndTable = (fieldName, tableName) =>
 
     let DETECT_FIELD_HAS_TABLE = /[a-z\_\`]+\.[a-z\_\`\*]+/
     if (tableName && !DETECT_FIELD_HAS_TABLE.test(fieldName))
-        return exports.parseFieldAndTable(`${tableName}.${fieldName}`);
+        return parseFieldAndTable(`${tableName}.${fieldName}`);
 
     let WRAPPED_BY_APOSTRPHE = /\`[a-z\_]+\`/;
     return fieldName.split('.')
@@ -74,11 +74,11 @@ exports.parseFieldAndTable = (fieldName, tableName) =>
 }
 
 
-exports.parseFilters = filter => 
+export const parseFilters = filter => 
 {
     if (typeof filter === 'object') {
         let expr = new QueryCriteria();
-        return Object.keys(filter).map((field) => {
+        return Object.keys(filter).map(field => {
             if (Array.isArray(filter[field])) {
                 let [ comp, value ] = filter[field];
                 return expr[comp.toLowerCase()](field, value);
