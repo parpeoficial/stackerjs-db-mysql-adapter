@@ -1,6 +1,6 @@
 {
     "name": "stackerjs-db-mysql-adapter",
-    "version": "0.9.2",
+    "version": "0.9.3",
     "author": {
         "name": "Vinicius Guedes",
         "email": "viniciusgued@gmail.com",

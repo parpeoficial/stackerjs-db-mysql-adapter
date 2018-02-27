@@ -1,0 +1,12 @@
+# App files and folders
+/.env
+/.nyc_output
+/coverage
+/node_modules
+/src
+/test
+
+# OS and IDE files and folders
+/.idea
+/.vscode
+/nbproject
