@@ -51,9 +51,17 @@ exports.treatValue = (value, treatString = true) =>
 
 exports.parseFieldAndTable = (fieldName, tableName) =>
 {
-    let DETECT_FIELD_HAS_FUNCTION = /\([a-z0-9\-\.\_\']+\)/;
-    if (DETECT_FIELD_HAS_FUNCTION.test(fieldName))
+    let DETECT_FIELD_IS_WRAPPED_BY_FUNCTION = /\([a-z0-9\-\.\_\']+\)/;
+    if (DETECT_FIELD_IS_WRAPPED_BY_FUNCTION.test(fieldName))
         return fieldName;
+
+    let DETECT_FIELD_IS_JSON = /[a-z\_]+\-\>\"\$\.[a-z0-9\.\_]+\"/
+    if (DETECT_FIELD_IS_JSON.test(fieldName))
+        return fieldName;
+
+    let field = fieldName.split('.')
+    if (field.length > 2)
+        return `${field[0]}->"$.${field.slice(1).join('.')}"`;
 
     let DETECT_FIELD_HAS_TABLE = /[a-z\_\`]+\.[a-z\_\`\*]+/
     if (tableName && !DETECT_FIELD_HAS_TABLE.test(fieldName))

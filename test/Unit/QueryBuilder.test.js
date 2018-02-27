@@ -238,4 +238,17 @@ describe('Unit/QueryBuilderTest', () =>
                 .parse()).to.be.equal('DELETE FROM table_name WHERE id >= 3;');
         });
     });
+
+    describe('Querying with JSON selector', () => 
+    {
+        it('Should make a SELECT query', () => 
+        {
+            expect(new QueryBuilder()
+                .select()
+                .set('person.document.id', 'person->"$.address.city"')
+                .from('table')
+                .parse())
+            .to.be.equal('SELECT person->"$.document.id", person->"$.address.city" FROM table;')
+        });
+    });
 });
