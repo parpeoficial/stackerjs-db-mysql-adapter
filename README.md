@@ -11,3 +11,26 @@
 
 # Database: MySQL Adapter
 An MySQL adapter for StackerJS apps with ORM interacting with MySQL databases.
+
+## Usage
+### SELECT
+```javascript
+import { QueryBuilder, QueryCriteria } from 'stackerjs-db-mysql-adapter';
+
+let criteria = new QueryCriteria(),
+    query = new QueryBuilder()
+        .select()
+        .set('id', ['full_name', 'name'], 'age')
+        .from('person')
+        .where(
+            criteria.andX(
+                criteria.eq('active', true),
+                criteria.gte('age', 18),
+                criteria.like('name', '%george%')
+            )
+        )
+        .parse();
+
+    // SELECT `person`.`id`, `person`.`full_name` AS name, `person`.`age` FROM person
+    // WHERE (`active` = 1 AND `age` >= 18 AND `name` LIKE "%george%");
+```
