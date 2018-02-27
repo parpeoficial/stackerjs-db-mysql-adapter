@@ -51,28 +51,18 @@ exports.treatValue = (value, treatString = true) =>
 
 exports.parseFieldAndTable = (fieldName, tableName) =>
 {
-    if (tableName && fieldName.indexOf('.') < 0)
-        return `${exports.escapeFieldsAndReservedWords(tableName)}.${fieldName}`;
+    let DETECT_FIELD_HAS_FUNCTION = /\([a-z0-9\-\.\_\']+\)/;
+    if (DETECT_FIELD_HAS_FUNCTION.test(fieldName))
+        return fieldName;
 
-    return fieldName;
-}
+    let DETECT_FIELD_HAS_TABLE = /[a-z\_\`]+\.[a-z\_\`\*]+/
+    if (tableName && !DETECT_FIELD_HAS_TABLE.test(fieldName))
+        return exports.parseFieldAndTable(`${tableName}.${fieldName}`);
 
-
-exports.escapeFieldsAndReservedWords = field =>
-{
-    let regexDetectSQLFunction = /\([a-zA-Z0-9\-\.\_]+\)/;
-    if (regexDetectSQLFunction.test(field))
-        return field
-    
-    if (field.indexOf('.') >= 0)
-        return field.split('.')
-            .map(f => exports.escapeFieldsAndReservedWords(f))
-            .join('.');
-
-    if (field.indexOf('*') >= 0)
-        return field;
-
-    return `\`${field}\``;
+    let WRAPPED_BY_APOSTRPHE = /\`[a-z\_]+\`/;
+    return fieldName.split('.')
+        .map(w => WRAPPED_BY_APOSTRPHE.test(w) || w === '*' ? w : `\`${w}\``)
+        .join('.');
 }
 
 

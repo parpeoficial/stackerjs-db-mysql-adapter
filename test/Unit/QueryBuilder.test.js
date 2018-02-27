@@ -112,7 +112,7 @@ describe('Unit/QueryBuilderTest', () =>
                 .group('table_name.average')
                 .parse()).to.be.equal(
                     'SELECT `table_name`.* FROM table_name ' +
-                    'GROUP BY table_name.average;'
+                    'GROUP BY `table_name`.`average`;'
                 );
         });
 

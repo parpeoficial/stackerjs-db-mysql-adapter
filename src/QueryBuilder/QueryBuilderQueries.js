@@ -1,4 +1,4 @@
-import { escapeFieldsAndReservedWords, parseFilters } from "../Utils";
+import { parseFilters, parseFieldAndTable } from "../Utils";
 
 
 export class QueryBuilderQueries
@@ -29,7 +29,7 @@ export class QueryBuilderQueries
                 .map((field) => this.set(field, fields[field]));
         
         if (typeof fields === 'string')
-            this.fields[escapeFieldsAndReservedWords(fields)] = value;
+            this.fields[parseFieldAndTable(fields)] = value;
 
         return this;
     }
