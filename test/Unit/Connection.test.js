@@ -5,19 +5,6 @@ import { Connection } from "./../../lib";
 describe('Unit/ConnectionTest', () => 
 {
 
-    describe('Without connection', () => 
-    {
-        it('Should trigger catch when database is not connected', done => 
-        {
-            new Connection()
-                .query('SELECT * FROM stackerjs;')
-                .catch(err => {
-                    expect(() => { throw err }).to.throw('Database is not connected');
-                })
-                .then(() => done());
-        });
-    });
-
     describe('Executing queries', () => 
     {
         const conn = new Connection();

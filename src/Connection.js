@@ -20,11 +20,12 @@ export class Connection
     query(query, parameters = [])
     {
         if (!this.isConnected())
-            return Promise.reject(new Error('Database is not connected'));
+            this.connect();
 
         return new Promise((resolve, reject) => 
         {
             this.conn.query(query, parameters, (err, result) => {
+                this.disconnect();
                 if (err)
                     return reject(err);
 
@@ -63,7 +64,10 @@ export class Connection
 
     disconnect()
     {
-        this.conn.end(() => { });
+        if (this.conn)
+            this.conn.destroy();
+            
+        this.conn = null;
     }
 
 }
