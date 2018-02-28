@@ -60,10 +60,12 @@ describe('Unit/QueryBuilderTest', () =>
                 .set('*')
                 .from('table')
                 .where({
-                    'UPPER(name)': [ 'like', 'UPPER("%stackerjs%")' ]
+                    'UPPER(name)': [ 'like', 'UPPER("%stackerjs%")' ],
+                    'last_name': { 'like': 'mysql' },
+                    'active': true
                 }).parse())
                 .to.be.equal(
-                    'SELECT * FROM table WHERE UPPER(name) LIKE UPPER("%stackerjs%");'
+                    'SELECT * FROM table WHERE UPPER(name) LIKE UPPER("%stackerjs%") AND `last_name` LIKE "%mysql%" AND `active` = 1;'
                 );
         });
 

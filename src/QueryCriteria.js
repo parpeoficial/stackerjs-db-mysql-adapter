@@ -7,8 +7,8 @@ export class QueryCriteria
 
     like(field, value)
     {
-        value = value.indexOf('%') >= 0 ? value : `%${treatValue(value)}%`;
-        return `${parseFieldAndTable(field)} LIKE ${treatValue(value)}`;   
+        value = value.indexOf('%') >= 0 ? value : treatValue(`%${value}%`);
+        return `${parseFieldAndTable(field)} LIKE ${value}`;   
     }
 
     eq(field, value)

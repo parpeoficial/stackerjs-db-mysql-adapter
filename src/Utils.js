@@ -1,6 +1,25 @@
 import { QueryCriteria } from "./index";
 
 
+const DETECT_FIELD_IS_WRAPPED_BY_FUNCTION = /\([a-z0-9\-\.\_\']+\)/,
+    DETECT_FIELD_IS_JSON = /[a-z\_]+\-\>\"\$\.[a-z0-9\.\_]+\"/,
+    DETECT_FIELD_HAS_TABLE = /[a-z\_\`]+\.[a-z\_\`\*]+/,
+    WRAPPED_BY_APOSTRPHE = /\`[a-z\_]+\`/;
+
+
+const parseDateToDateTimeString = value => [
+        [
+            value.getFullYear(),
+            padString((value.getMonth() + 1).toString(), 2),
+            padString(value.getDate().toString(), 2)
+        ].join('-'),
+        [
+            padString(value.getHours().toString(), 2),
+            padString(value.getMinutes().toString(), 2),
+            padString(value.getSeconds().toString(), 2)
+        ].join(':')
+    ].join(' ');
+
 
 export const padString = (text, desiredSize, completeWith = '0') =>
 {
@@ -16,18 +35,7 @@ export const padString = (text, desiredSize, completeWith = '0') =>
 export const treatValue = (value, treatString = true) =>
 {
     if (value instanceof Date)
-        return treatValue([
-            [
-                value.getFullYear(),
-                padString((value.getMonth() + 1).toString(), 2),
-                padString(value.getDate().toString(), 2)
-            ].join('-'),
-            [
-                padString(value.getHours().toString(), 2),
-                padString(value.getMinutes().toString(), 2),
-                padString(value.getSeconds().toString(), 2)
-            ].join(':')
-        ].join(' '), treatString);
+        return treatValue(parseDateToDateTimeString(value), treatString);
 
     if (typeof value === 'number')
         return value;
@@ -51,11 +59,9 @@ export const treatValue = (value, treatString = true) =>
 
 export const parseFieldAndTable = (fieldName, tableName) =>
 {
-    let DETECT_FIELD_IS_WRAPPED_BY_FUNCTION = /\([a-z0-9\-\.\_\']+\)/;
     if (DETECT_FIELD_IS_WRAPPED_BY_FUNCTION.test(fieldName))
         return fieldName;
 
-    let DETECT_FIELD_IS_JSON = /[a-z\_]+\-\>\"\$\.[a-z0-9\.\_]+\"/
     if (DETECT_FIELD_IS_JSON.test(fieldName))
         return fieldName;
 
@@ -63,11 +69,9 @@ export const parseFieldAndTable = (fieldName, tableName) =>
     if (field.length > 2)
         return `${field[0]}->"$.${field.slice(1).join('.')}"`;
 
-    let DETECT_FIELD_HAS_TABLE = /[a-z\_\`]+\.[a-z\_\`\*]+/
     if (tableName && !DETECT_FIELD_HAS_TABLE.test(fieldName))
         return parseFieldAndTable(`${tableName}.${fieldName}`);
 
-    let WRAPPED_BY_APOSTRPHE = /\`[a-z\_]+\`/;
     return fieldName.split('.')
         .map(w => WRAPPED_BY_APOSTRPHE.test(w) || w === '*' ? w : `\`${w}\``)
         .join('.');
