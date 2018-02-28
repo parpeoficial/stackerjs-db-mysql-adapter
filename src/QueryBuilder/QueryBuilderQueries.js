@@ -40,9 +40,9 @@ export class QueryBuilderQueries
         return this;
     }
 
-    treatValue(value)
+    treatValue(value, treatString = true)
     {
-        return treatValue(value);
+        return treatValue(value, treatString);
     }
 
 }
