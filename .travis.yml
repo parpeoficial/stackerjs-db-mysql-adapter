@@ -2,6 +2,9 @@ language: node_js
 node_js:
   - "7"
 
+services:
+  - mysql
+
 notifications:
   slack: parpe:ypxSy7CvUXYAShDK7C3supzV
 
@@ -12,6 +15,11 @@ install:
   - npm install
 
 before_script:
+  - echo DB_HOST=127.0.0.1 >> .env
+  - echo DB_USER=root >> .env
+  - echo DB_HOST= >> .env
+  - echo DB_NAME=stackerjs >> .env
+  - mysql -e 'CREATE SCHEMA stackerjs;'
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
