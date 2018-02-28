@@ -1,10 +1,10 @@
 import { QueryCriteria } from "./index";
 
 
-const DETECT_FIELD_IS_WRAPPED_BY_FUNCTION = /\([a-z0-9\-\.\_\']+\)/,
+const DETECT_FIELD_IS_WRAPPED_BY_FUNCTION = /\([a-z0-9\-\.\_\'\*]+\)/,
     DETECT_FIELD_IS_JSON = /[a-z\_]+\-\>\"\$\.[a-z0-9\.\_]+\"/,
     DETECT_FIELD_HAS_TABLE = /[a-z\_\`]+\.[a-z\_\`\*]+/,
-    WRAPPED_BY_APOSTRPHE = /\`[a-z\_]+\`/;
+    WRAPPED_BY_APOSTROPHE = /\`[a-z\_]+\`/;
 
 
 const parseDateToDateTimeString = value => [
@@ -73,7 +73,7 @@ export const parseFieldAndTable = (fieldName, tableName) =>
         return parseFieldAndTable(`${tableName}.${fieldName}`);
 
     return fieldName.split('.')
-        .map(w => WRAPPED_BY_APOSTRPHE.test(w) || w === '*' ? w : `\`${w}\``)
+        .map(w => WRAPPED_BY_APOSTROPHE.test(w) || w === '*' ? w : `\`${w}\``)
         .join('.');
 }
 

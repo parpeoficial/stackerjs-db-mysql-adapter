@@ -27,7 +27,7 @@ export class QueryBuilderSelect extends QueryBuilderQueries
                     field = parseFieldAndTable(arg);
 
                 if (Array.isArray(arg))
-                    field = `${parseFieldAndTable(arg[0], this.tableName)} AS ${arg[1]}`;
+                    field = `${parseFieldAndTable(arg[0], this.tableName)} AS ${parseFieldAndTable(arg[1])}`;
 
                 this.fields.push(parseFieldAndTable(field, this.tableName));
 

@@ -48,7 +48,7 @@ describe('Unit/QueryBuilderTest', () =>
                 .set(['CONCAT(LOWER(table.first_name), " ", table.last_name)', 'full_name'])
                 .parse())
                 .to.be.equal(
-                    'SELECT CONCAT(LOWER(table.first_name), " ", table.last_name) AS full_name ' +
+                    'SELECT CONCAT(LOWER(table.first_name), " ", table.last_name) AS `full_name` ' +
                     'FROM table;'
                 );
         });
@@ -77,7 +77,7 @@ describe('Unit/QueryBuilderTest', () =>
                 .set(['ACOS(COS(RADIANS(-23.120381)))', 'radius'])
                 .parse())
                 .to.be.equal(
-                    'SELECT ACOS(COS(RADIANS(-23.120381))) AS radius FROM table;'
+                    'SELECT ACOS(COS(RADIANS(-23.120381))) AS `radius` FROM table;'
                 );
         });
 
@@ -128,7 +128,7 @@ describe('Unit/QueryBuilderTest', () =>
                 .limit(10)
                 .offset(20)
                 .parse()).to.be.equal(
-                    'SELECT `table_name`.`id`, `table_name`.`first_name` AS name ' +
+                    'SELECT `table_name`.`id`, `table_name`.`first_name` AS `name` ' +
                     'FROM table_name LIMIT 10 OFFSET 20;'
                 );
         });
