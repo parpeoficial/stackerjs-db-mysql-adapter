@@ -41,6 +41,16 @@ export class QueryCriteria
         return `${parseFieldAndTable(field)} >= ${treatValue(value)}`;
     }
 
+    in(field, value)
+    {
+        return this.intersectIn(field, value);
+    }
+
+    notin(field, value)
+    {
+        return this.intersectIn(field, value, true);
+    }
+
     andX() 
     {
         return `(${this.intersect(arguments, 'AND')})`;
@@ -56,6 +66,11 @@ export class QueryCriteria
         return Object.keys(whatToInsersect)
             .map(key => whatToInsersect[key])
             .join(` ${intersectWith.trim()} `)
+    }
+
+    intersectIn(field, value, not = false)
+    {
+        return `${parseFieldAndTable(field)} ${not ? "NOT" : ""} IN (${value.map(v => treatValue(v)).join(', ')})`;
     }
 
 }

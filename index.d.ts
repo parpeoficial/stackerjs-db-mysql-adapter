@@ -14,4 +14,9 @@ declare module "stackerjs-db-mysql-adapter"
 
     }
 
+    export class Connection extends StackerJS.DB.Connection
+    {
+        
+    }
+
 }

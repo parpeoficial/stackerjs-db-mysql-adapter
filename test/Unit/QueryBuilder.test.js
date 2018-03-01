@@ -159,6 +159,22 @@ describe('Unit/QueryBuilderTest', () =>
                 .then(() => done());
         });
 
+        it('Should filter by IN and NOT IN', done => 
+        {
+            let criteria = new QueryCriteria();
+            new QueryBuilder()
+                .select()
+                .set('*')
+                .from('user_messages')
+                .where(criteria.andX(
+                    criteria.in('sender_id', [ 2 ]),
+                    criteria.notin('sender_id', [ 1 ])
+                ))
+                .execute()
+                .then(results => expect(results).to.be.lengthOf(2))
+                .then(() => done());
+        });
+
         it('Should GROUP query results', done => 
         {
             new QueryBuilder()
