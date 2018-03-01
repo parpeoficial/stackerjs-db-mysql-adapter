@@ -41,6 +41,16 @@ export class QueryCriteria
         return `${parseFieldAndTable(field)} >= ${treatValue(value)}`;
     }
 
+    in(field, value)
+    {
+        return `${parseFieldAndTable(field)} IN (${value.map(v => treatValue(v)).join(', ')})`;
+    }
+
+    notin(field, value)
+    {
+        return `${parseFieldAndTable(field)} NOT IN (${value.map(v => treatValue(v)).join(', ')})`;
+    }
+
     andX() 
     {
         return `(${this.intersect(arguments, 'AND')})`;
