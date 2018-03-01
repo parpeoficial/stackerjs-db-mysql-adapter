@@ -2,10 +2,16 @@ import { QueryBuilderInsert } from './QueryBuilderInsert';
 import { QueryBuilderUpdate } from './QueryBuilderUpdate';
 import { QueryBuilderDelete } from './QueryBuilderDelete';
 import { QueryBuilderSelect } from './QueryBuilderSelect';
+import { QueryBuilderTable } from './QueryBuilderTable';
 
 
 export class QueryBuilder
 {
+
+    table()
+    {
+        return new QueryBuilderTable();
+    }
 
     insert()
     {
