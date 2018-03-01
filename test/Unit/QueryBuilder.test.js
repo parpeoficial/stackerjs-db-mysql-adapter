@@ -1,258 +1,328 @@
 import { expect } from 'chai';
-import { QueryBuilder, QueryCriteria } from './../../lib';
+import { QueryBuilder, QueryCriteria, Connection } from './../../lib';
 
 
 describe('Unit/QueryBuilderTest', () => 
 {
 
-    describe('InsertQueryBuilderTest', () => 
+    describe('Creating table', () =>
     {
-        it('Should create query the common way', () => 
+        it('Should create a table', done => 
         {
-            expect(new QueryBuilder()
-                .insert()
-                .into('table_name')
+            new QueryBuilder()
+                .table()
+                .create('user')
                 .set({
-                    'name': 'person name',
-                    'birth_year': 1992,
-                    'status': true
+                    'id': { 'type': 'pk', 'required': true },
+                    'first_name': { 'type': 'varchar', 'size': 100, 'required': true },
+                    'last_name': { 'type': 'varchar', 'size': 100, 'required': true },
+                    'extra': { 'type': 'json' },
+                    'birthday': { 'type': 'date' },
+                    'active': { 'type': 'integer', 'defaultValue': 0 }
                 })
-                .parse()).to.be.equal(
-                    'INSERT INTO table_name (`name`, `birth_year`, `status`) ' +
-                    'VALUES ("person name", 1992, 1);'
-                );
+                .execute()
+                .then(response => expect(response.affectedRows).to.be.equal(0))
+                .then(() => done());
         });
 
-        it('Should create query the detailed way', () => 
+        it('Should create a table if not exists', done => 
         {
-            expect(new QueryBuilder()
+            new QueryBuilder()
+                .table()
+                .ifNotExists()
+                .create('user_messages')
+                .set({
+                    'id': { 'type': 'pk', 'required': true },
+                    'sender_id': { 'type': 'integer', 'required': true },
+                    'receiver_id': { 'type': 'integer', 'required': true },
+                    'message': { 'type': 'varchar', 'size': 120, 'required': true },
+                    'sent_at': { 'type': 'datetime', 'required': true, 'defaultValue': 'CURRENT_TIMESTAMP' }
+                })
+                .execute()
+                .then(response => expect(response.affectedRows).to.be.equal(0))
+                .then(() => done());
+        });
+    });
+
+    describe('InsertQueryBuilderTest', () => 
+    {
+        it('Should create query the common way', done => 
+        {
+            new QueryBuilder()
                 .insert()
-                .into('logs')
-                .set('user_id', 1)
-                .set('message', 'Inserted something on database')
-                .set('when', new Date('2017-10-20 16:50:00'))
-                .parse()).to.be.equal(
-                    'INSERT INTO logs (`user_id`, `message`, `when`) ' +
-                    'VALUES (1, "Inserted something on database", "2017-10-20 16:50:00");'
-                );
+                .into('user')
+                .set({
+                    'first_name': 'A person',
+                    'last_name':  'name',
+                    'extra': { 'address': { 'country': 'Brazil'}, 'points': { 'sender': 10, 'receiver': 9.5 } }
+                })
+                .execute()
+                .then(response => {
+                    expect(response.affectedRows).to.be.equal(1);
+                    expect(response.lastInsertedId).to.be.equal(1);
+                })
+                .then(() => done());
+        });
+
+        it('Should create query the detailed way', done => 
+        {
+            new QueryBuilder()
+                .insert()
+                .into('user')
+                .set('first_name', 'Another')
+                .set('last_name', 'person')
+                .set('birthday', new Date('2017-05-15 09:00:01'))
+                .set('extra', { 'address': { 'country': 'Portugal' }, 'points': { 'sender': 3, 'receiver': 2.75 } })
+                .set('active', true)
+                .execute()
+                .then(response => expect(response.affectedRows).to.be.equal(1))
+                .then(() => done());
+        });
+
+        it('Should insert data for posterior testing', done => 
+        {
+            new QueryBuilder()
+                .insert()
+                .into('user_messages')
+                .set({
+                    'sender_id': 1,
+                    'receiver_id': 2,
+                    'message': 'Give me some credit'
+                })
+                .execute()
+                .then(response => expect(response.lastInsertedId).to.be.equal(1))
+                .then(() => done());
         });
     });
 
     describe('SelectQueryBuilderTest', () => 
     {
-        it('Should do a test', () => 
+        it('Should insert multiple data', done => 
         {
-            expect(new QueryBuilder()
-                .select()
-                .from('table')
-                .set(['CONCAT(LOWER(table.first_name), " ", table.last_name)', 'full_name'])
-                .parse())
-                .to.be.equal(
-                    'SELECT CONCAT(LOWER(table.first_name), " ", table.last_name) AS `full_name` ' +
-                    'FROM table;'
-                );
+            new Connection().query(
+                'INSERT INTO user_messages (sender_id, receiver_id, message) VALUES ' +
+                '(1, 2, "Hello"),' +
+                '(2, 1, "Hello man"),' +
+                '(1, 2, "u okay ?"),' +
+                '(2, 1, "yea, and u ?"),' +
+                '(1, 2, "eveything good")'
+            )
+            .then(() => done());
         });
 
-        it('Should filter by where with function', () => 
+        it('Should select selecting field using alias', done => 
         {
-            expect(new QueryBuilder()
+            new QueryBuilder()
+                .select()
+                .from('user')
+                .set(['CONCAT(LOWER(user.first_name), " ", user.last_name)', 'full_name'])
+                .execute()
+                .then(results => {
+                    expect(results).to.be.an('array');
+                    expect(results).to.be.lengthOf(2);
+                    expect(results[0]).to.have.property('full_name');
+                })
+                .then(() => done());
+        });
+
+        it('Should filter by where with function', done => 
+        {
+            new QueryBuilder()
                 .select()
                 .set('*')
-                .from('table')
+                .from('user')
                 .where({
-                    'UPPER(name)': [ 'like', 'UPPER("%stackerjs%")' ],
-                    'last_name': { 'like': 'mysql' },
-                    'active': true
-                }).parse())
-                .to.be.equal(
-                    'SELECT * FROM table WHERE UPPER(name) LIKE UPPER("%stackerjs%") AND `last_name` LIKE "%mysql%" AND `active` = 1;'
-                );
+                    'UPPER(last_name)': { 'eq': 'UPPER("person")' },
+                    'active': true,
+                    'extra->address->country': ['like', '"%tugal%"']
+                })
+                .execute()
+                .then(results => {
+                    expect(results).to.be.lengthOf(1);
+                    expect(results[0].last_name).to.be.equal('person');
+                })
+                .then(() => done());
         });
 
-        it('Should test parsing functions with number parameters', () => 
+        it('Should JOIN queries', done => 
         {
-            expect(new QueryBuilder()
+            new QueryBuilder()
                 .select()
-                .from('table')
-                .set(['ACOS(COS(RADIANS(-23.120381)))', 'radius'])
-                .parse())
-                .to.be.equal(
-                    'SELECT ACOS(COS(RADIANS(-23.120381))) AS `radius` FROM table;'
-                );
+                .from('user')
+                .set('user_messages.*')
+                .join('INNER', 'user_messages', 'user.id = user_messages.sender_id')
+                .execute()
+                .then(results => {
+                    expect(results).to.be.an('array');
+                    expect(results).to.be.lengthOf(6);
+                })
+                .then(() => done());
         });
 
-        it('Should create a select query without trouble', () => 
+        it('Should GROUP query results', done => 
         {
-            expect(new QueryBuilder()
+            new QueryBuilder()
                 .select()
-                .from('table_name')
-                .set('id', 'name', 'table_name.active')
-                .parse()).to.be.equal(
-                    'SELECT `table_name`.`id`, `table_name`.`name`, `table_name`.`active` ' +
-                    'FROM table_name;'
-                );
+                .from('user_messages')
+                .set(['COUNT(*)', 'total'])
+                .group('sender_id')
+                .execute()
+                .then(results => expect(results).to.be.lengthOf(2))
+                .then(() => done());
         });
 
-        it('Should JOIN queries', () => 
+        it('Should LIMIT and OFFSET results', done => 
         {
-            expect(new QueryBuilder()
+            new QueryBuilder()
                 .select()
-                .from('table_name')
-                .set('table_name.*')
-                .join('LEFT', 'other_table', 'table_name.id = other_table.fk_id')
-                .parse()).to.be.equal(
-                    'SELECT `table_name`.* FROM table_name ' +
-                    'LEFT JOIN other_table ON table_name.id = other_table.fk_id;'
-                );
-        });
-
-        it('Should GROUP query results', () => 
-        {
-            expect(new QueryBuilder()
-                .select()
-                .from('table_name')
-                .set('*')
-                .group('table_name.average')
-                .parse()).to.be.equal(
-                    'SELECT `table_name`.* FROM table_name ' +
-                    'GROUP BY `table_name`.`average`;'
-                );
-        });
-
-        it('Should LIMIT and OFFSET results', () => 
-        {
-            expect(new QueryBuilder()
-                .select()
-                .from('table_name')
+                .from('user')
                 .set('id', ['first_name', 'name'])
-                .limit(10)
-                .offset(20)
-                .parse()).to.be.equal(
-                    'SELECT `table_name`.`id`, `table_name`.`first_name` AS `name` ' +
-                    'FROM table_name LIMIT 10 OFFSET 20;'
-                );
+                .limit(1)
+                .offset(1)
+                .execute()
+                .then(response => expect(response[0].name).to.be.equal('Another'))
+                .then(() => done())
         });
 
-        it('Should filter queries without trouble', () => 
+        it('Should filter queries without trouble', done => 
         {
-            expect(new QueryBuilder()
+            new QueryBuilder()
                 .select()
-                .from('table_name')
+                .from('user')
                 .set('*')
                 .where('active = 1')
-                .parse()).to.be.equal(
-                    'SELECT `table_name`.* FROM table_name WHERE active = 1;'
-                );
+                .execute()
+                .then(results => expect(results).to.be.lengthOf(1))
+                .then(() => done());
         });
 
-        it('Should filter query using QueryCriteria', () => 
+        it('Should filter query using QueryCriteria', done => 
         {
             let criteria = new QueryCriteria();
-            expect(new QueryBuilder()
+            new QueryBuilder()
                 .select()
-                .from('table_name')
+                .from('user')
                 .set('*')
                 .where(criteria.andX(
-                    criteria.eq('active', 1), 
-                    criteria.gt('value', 100), 
-                    criteria.lt('value', 1000)
-                )).parse()).to.be.equal(
-                    'SELECT `table_name`.* FROM table_name ' +
-                    'WHERE (`active` = 1 AND `value` > 100 AND `value` < 1000);'
-                );
+                    criteria.eq('active', 1),
+                    criteria.like('first_name', 'other')
+                ))
+                .execute()
+                .then(results => expect(results).to.be.lengthOf(1))
+                .then(() => done());
         });
         
-        it('Should test queries with HAVING', () => 
+        it('Should test queries with HAVING', done => 
         {
             let criteria = new QueryCriteria();
-            expect(
-                new QueryBuilder()
-                    .select()
-                    .set('*')
-                    .from('table_name')
-                    .having(
-                        criteria.eq('active', false)
-                    )
-                    .parse()
-            ).to.be.equal(
-                'SELECT * FROM table_name ' +
-                'HAVING `active` = 0;' 
-            );
+            new QueryBuilder()
+                .select()
+                .set(['COUNT(*)', 'total'])
+                .from('user_messages')
+                .group('sender_id')
+                .having(criteria.neq('total', 2))
+                .execute()
+                .then(results => expect(results[0].total).equal(4))
+                .then(() => done());
         });
 
-        it('Should test queries with ORDER', () => 
+        it('Should test queries with ORDER', done => 
         {
-            expect(
-                new QueryBuilder()
-                    .select()
-                    .set('*')
-                    .from('table_name')
-                    .order(['name DESC'])
-                    .parse()
-            ).to.be.equal('SELECT * FROM table_name ORDER BY name DESC;');
+            new QueryBuilder()
+                .select()
+                .set('last_name', ['extra->points->sender', 'sender_points'])
+                .from('user')
+                .order(['extra->points->sender', 'DESC'], 'last_name')
+                .execute()
+                .then(results => {
+                    expect(results).to.be.lengthOf(2);
+                    expect(results[0]).to.have.property('sender_points');
+                    expect(results[0].sender_points).to.be.equal('10');
+                })
+                .then(() => done())
         });
     });
 
     describe('UpdateQueryBuilderTest', () => 
     {
-        it('Should create update query without trouble', () => 
+        it('Should create update query without trouble', done => 
         {
-            expect(new QueryBuilder()
+            new QueryBuilder()
                 .update()
-                .into('table_name')
-                .set('name', 'other person')
-                .set('status', false)
-                .parse()).to.be.equal(
-                    'UPDATE table_name SET `name` = "other person", `status` = 0;'
-                );
+                .into('user')
+                .set('last_name', 'UPPER(last_name)')
+                .execute()
+                .then(response => expect(response.changedRows).to.be.equal(2))
+                .then(() => done());
         });
 
-        it('Should create filtered update query', () => 
+        it('Should create filtered update query', done => 
         {
             let criteria = new QueryCriteria();
-            expect(new QueryBuilder()
+            new QueryBuilder()
                 .update()
-                .into('table_name')
-                .set('active', false)
-                .where(criteria.orX(criteria.neq('active', false), criteria.lte('birth_date', new Date('1992-12-30 08:25:01'))))
-                .parse()).to.be.equal(
-                    'UPDATE table_name SET `active` = 0 ' +
-                    'WHERE (`active` <> 0 OR `birth_date` <= "1992-12-30 08:25:01");'
-                );
+                .into('user')
+                .set('active', true)
+                .where(criteria.andX(
+                    criteria.gt('extra->points->sender', 6),
+                    criteria.lt('extra->points->sender', 11)
+                ))
+                .execute()
+                .then(response => expect(response.changedRows).to.be.equal(1))
+                .then(() => done());
         });
     });
 
     describe('DeleteQueryBuilderTest', () => 
     {
-        it('Should create a delete query without trouble', () => 
+        it('Should create a delete query', done => 
         {
-            expect(new QueryBuilder()
+            new QueryBuilder()
                 .delete()
-                .from('table_name')
-                .parse()).to.be.equal('DELETE FROM table_name;');
+                .from('user_messages')
+                .execute()
+                .then(response => expect(response.affectedRows).to.be.equal(6))
+                .then(() => done());
         });
 
-        it('Should create a delete filtered query', () => 
+        it('Should create a delete filtered query', done => 
         {
             let criteria = new QueryCriteria();
-            expect(new QueryBuilder()
+            new QueryBuilder()
                 .delete()
-                .from('table_name')
-                .where(criteria.gte('id', 3))
-                .parse()).to.be.equal('DELETE FROM table_name WHERE `id` >= 3;');
+                .from('user')
+                .where(criteria.orX(
+                    criteria.gte('id', 2),
+                    criteria.lte('id', 0)
+                ))
+                .execute()
+                .then(response => expect(response.affectedRows).to.be.equal(1))
+                .then(() => done());
         });
     });
 
-    describe('Querying with JSON selector', () => 
+    describe('Dropping table', () =>
     {
-        it('Should make a SELECT query', () => 
+        it('Should drop a table', done => 
         {
-            expect(new QueryBuilder()
-                .select()
-                .set('person.document.id', 'person->"$.address.city"')
-                .from('table')
-                .parse())
-            .to.be.equal('SELECT person->"$.document.id", person->"$.address.city" FROM table;')
+            new QueryBuilder()
+                .table()
+                .drop('user')
+                .execute()
+                .then(response => expect(response.affectedRows).to.be.equal(0))
+                .then(() => done());
+        });
+
+        it('Should drop a table if exists', done => 
+        {
+            new QueryBuilder()
+                .table()
+                .ifExists()
+                .drop('user_messages')
+                .execute()
+                .then(response => expect(response.affectedRows).to.be.equal(0))
+                .then(() => done());
         });
     });
+
 });

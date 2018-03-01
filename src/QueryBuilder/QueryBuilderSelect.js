@@ -70,13 +70,16 @@ export class QueryBuilderSelect extends QueryBuilderQueries
         return this;
     }
 
-    order(order)
+    order()
     {
-        if (Array.isArray(order)) {
-            for (let o of order)
-                this.order(o);
-        } else
-            this._order.push(order);
+        Object.keys(arguments)
+            .map(o => arguments[o])
+            .forEach(o => {
+                if (Array.isArray(o))
+                    return this._order.push(`${parseFieldAndTable(o[0])} ${o[1]}`);
+
+                return this._order.push(parseFieldAndTable(o));
+            });
             
         return this;
     }

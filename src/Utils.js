@@ -3,6 +3,7 @@ import { QueryCriteria } from "./index";
 
 const DETECT_FIELD_IS_WRAPPED_BY_FUNCTION = /\([a-z0-9\-\.\_\'\*]+\)/,
     DETECT_FIELD_IS_JSON = /[a-z\_]+\-\>\"\$\.[a-z0-9\.\_]+\"/,
+    DETECT_FIELD_IS_PARSED_JSON = /[a-zA-Z\_]+\-\>/,
     DETECT_FIELD_HAS_TABLE = /[a-z\_\`]+\.[a-z\_\`\*]+/,
     WRAPPED_BY_APOSTROPHE = /\`[a-z\_]+\`/;
 
@@ -21,7 +22,7 @@ const parseDateToDateTimeString = value => [
     ].join(' ');
 
 
-export const padString = (text, desiredSize, completeWith = '0') =>
+const padString = (text, desiredSize, completeWith = '0') =>
 {
     if (text.length < desiredSize) {
         while (text.length < desiredSize)
@@ -44,7 +45,7 @@ export const treatValue = (value, treatString = true) =>
         return value ? 1 : 0;
 
     if (Array.isArray(value) || typeof value === 'object')
-        return JSON.stringify(value);
+        return treatValue(JSON.stringify(value).replace(/\"/g, '\\"'), treatString);
 
     if (value === '?' || !treatString)
         return value;
@@ -65,9 +66,8 @@ export const parseFieldAndTable = (fieldName, tableName) =>
     if (DETECT_FIELD_IS_JSON.test(fieldName))
         return fieldName;
 
-    let field = fieldName.split('.')
-    if (field.length > 2)
-        return `${field[0]}->"$.${field.slice(1).join('.')}"`;
+    if (DETECT_FIELD_IS_PARSED_JSON.test(fieldName))
+        return (fields => `${fields.splice(0, 1)}->"$.${fields.join('.')}"`)(fieldName.split('->'));
 
     if (tableName && !DETECT_FIELD_HAS_TABLE.test(fieldName))
         return parseFieldAndTable(`${tableName}.${fieldName}`);

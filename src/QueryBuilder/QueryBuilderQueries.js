@@ -1,4 +1,5 @@
 import { parseFilters, parseFieldAndTable, treatValue } from "../Utils";
+import { Connection } from "../Connection";
 
 
 export class QueryBuilderQueries
@@ -43,6 +44,12 @@ export class QueryBuilderQueries
     treatValue(value, treatString = true)
     {
         return treatValue(value, treatString);
+    }
+
+    execute()
+    {
+        return new Connection()
+            .query(this.parse());
     }
 
 }
