@@ -1,6 +1,6 @@
 {
     "name": "stackerjs-db-mysql-adapter",
-    "version": "0.9.10",
+    "version": "1.0.0",
     "author": {
         "name": "Vinicius Guedes",
         "email": "viniciusgued@gmail.com",
@@ -11,11 +11,11 @@
         "url": "https://github.com/parpeoficial/stackerjs-db-mysql-adapter"
     },
     "main": "lib/index.js",
-
+    
     "dependencies": {
         "babel-polyfill": "^6.26.0",
         "mysql": "^2.15.0",
-        "stackerjs-types": "^1.0.6",
+        "stackerjs-types": "^1.0.7",
         "stackerjs-utils": "^1.0.2"
     },
     "devDependencies": {
