@@ -42,6 +42,16 @@ describe('Unit/QueryBuilderTest', () =>
                 .then(response => expect(response.affectedRows).to.be.equal(0))
                 .then(() => done());
         });
+
+        it('Should check if table exists', done => 
+        {
+            new QueryBuilder()
+                .table()
+                .exists('user_messages')
+                .execute()
+                .then(response => expect(response).to.be.true)
+                .then(() => done());
+        });
     });
 
     describe('InsertQueryBuilderTest', () => 
