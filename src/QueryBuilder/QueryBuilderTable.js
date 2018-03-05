@@ -36,6 +36,13 @@ export class QueryBuilderTable extends QueryBuilderQueries
         return this;
     }
 
+    exists(table)
+    {
+        this.tableName = table;
+        this.type = 'EXISTS';
+        return this;
+    }
+
     ifExists()
     {
         this.checkIfExists = true;
@@ -52,7 +59,10 @@ export class QueryBuilderTable extends QueryBuilderQueries
         if (this.type === 'CREATE')
             return `CREATE TABLE ${this.checkIfExists ? 'IF NOT EXISTS' : ''} ${this.tableName} (${this.parseFields()});`;
 
-        return `DROP TABLE ${this.checkIfExists ? 'IF EXISTS' : ''} ${this.tableName};`
+        if (this.type === 'DROP')
+            return `DROP TABLE ${this.checkIfExists ? 'IF EXISTS' : ''} ${this.tableName};`
+
+        return `SHOW TABLES LIKE "${this.tableName}";`;            
     }
 
     parseFields()
@@ -68,6 +78,17 @@ export class QueryBuilderTable extends QueryBuilderQueries
                 ].join(' ').trim()
             })
             .join(', ');
+    }
+
+    execute()
+    {
+        return super.execute()
+            .then(result => {;
+                if (this.type === 'EXISTS')
+                    return result.length > 0;
+
+                return result;
+            });
     }
 
 }
