@@ -36,18 +36,21 @@ const padString = (text, desiredSize, completeWith = '0') =>
 
 export const treatValue = value =>
 {
+    if (!value)
+        return "NULL";
+
     if (value && typeof value.parse === 'function')
         return `(${value.parse().slice(0, -1)})`;
-
-    if (value instanceof Date)
-        return treatValue(parseDateToDateTimeString(value));
-
-    if (Array.isArray(value) || typeof value === 'object')
-        return treatValue(JSON.stringify(value));
 
     let regexIsFunction = /[a-zA-Z\_]+\((.*?)\)/
     if (regexIsFunction.test(value))
         return value;
+
+    if (value instanceof Date)
+        value = parseDateToDateTimeString(value);
+
+    if (Array.isArray(value) || typeof value === 'object')
+        value = JSON.stringify(value);
 
     return escape(value);
 }

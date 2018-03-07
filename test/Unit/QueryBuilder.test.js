@@ -307,6 +307,7 @@ describe('Unit/QueryBuilderTest', () =>
                 .update()
                 .into('user')
                 .set('active', true)
+                .set('extra', null)
                 .where(criteria.andX(
                     criteria.gt('extra->points->sender', 6),
                     criteria.lt('extra->points->sender', 11)
