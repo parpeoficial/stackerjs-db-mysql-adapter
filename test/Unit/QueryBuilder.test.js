@@ -237,6 +237,22 @@ describe('Unit/QueryBuilderTest', () =>
                 .then(results => expect(results).to.be.lengthOf(1))
                 .then(() => done());
         });
+
+        it('Should execute subquery', done => 
+        {
+            new QueryBuilder()
+                .select()
+                .set('*')
+                .from('user_messages')
+                .where({
+                    'sender_id': {
+                        'in': new QueryBuilder().select().set('id').from('user')
+                    }
+                })
+                .execute()
+                .then(results => console.log(results))
+                .then(() => done());
+        });
         
         it('Should test queries with HAVING', done => 
         {

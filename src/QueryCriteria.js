@@ -70,7 +70,12 @@ export class QueryCriteria
 
     intersectIn(field, value, not = false)
     {
-        return `${parseFieldAndTable(field)} ${not ? "NOT" : ""} IN (${value.map(v => treatValue(v)).join(', ')})`;
+        if (Array.isArray(value))
+            value = `(${value.map(v => treatValue(v)).join(', ')})`;
+        else if (typeof value === 'object' && typeof value.parse === 'function')
+            value = treatValue(value);
+
+        return `${parseFieldAndTable(field)} ${not ? "NOT" : ""} IN ${value}`;
     }
 
 }

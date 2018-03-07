@@ -35,6 +35,9 @@ const padString = (text, desiredSize, completeWith = '0') =>
 
 export const treatValue = (value, treatString = true) =>
 {
+    if (typeof value.parse === 'function')
+        return `(${value.parse().slice(0, -1)})`;
+
     if (value instanceof Date)
         return treatValue(parseDateToDateTimeString(value), treatString);
 
@@ -86,7 +89,7 @@ export const parseFilters = filter =>
             if (Array.isArray(filter[field])) {
                 let [ comp, value ] = filter[field];
                 return expr[comp.toLowerCase()](field, value);
-            } else if (typeof filter[field] === 'object')
+            } else if (typeof filter[field] === 'object' && typeof filter[field].parse !== 'function')
                 return Object.keys(filter[field]).map((comp) => {
                     return expr[comp.toLowerCase()](field, filter[field][comp]);
                 }).join(' AND ');
