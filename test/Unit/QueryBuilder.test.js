@@ -250,7 +250,7 @@ describe('Unit/QueryBuilderTest', () =>
                     }
                 })
                 .execute()
-                .then(results => console.log(results))
+                .then(results => expect(results).to.be.lengthOf(6))
                 .then(() => done());
         });
         

@@ -1,3 +1,4 @@
+import { escape } from 'mysql';
 import { QueryCriteria } from "./index";
 
 
@@ -33,31 +34,22 @@ const padString = (text, desiredSize, completeWith = '0') =>
 }
 
 
-export const treatValue = (value, treatString = true) =>
+export const treatValue = value =>
 {
     if (typeof value.parse === 'function')
         return `(${value.parse().slice(0, -1)})`;
 
     if (value instanceof Date)
-        return treatValue(parseDateToDateTimeString(value), treatString);
-
-    if (typeof value === 'number')
-        return value;
-
-    if (typeof value === 'boolean')
-        return value ? 1 : 0;
+        return treatValue(parseDateToDateTimeString(value));
 
     if (Array.isArray(value) || typeof value === 'object')
-        return treatValue(JSON.stringify(value).replace(/\"/g, '\\"'), treatString);
-
-    if (value === '?' || !treatString)
-        return value;
+        return treatValue(JSON.stringify(value));
 
     let regexIsFunction = /[a-zA-Z\_]+\((.*?)\)/
     if (regexIsFunction.test(value))
         return value;
 
-    return `"${value}"`;
+    return escape(value);
 }
 
 

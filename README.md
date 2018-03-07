@@ -13,6 +13,23 @@
 An MySQL adapter for StackerJS apps with ORM interacting with MySQL databases.
 
 ## Usage
+
+### INSERT
+```javascript
+import { QueryBuilder } from 'stackerjs-db-mysql-adapter';
+
+let query = new QueryBuilder()
+    .insert()
+    .set({
+        'full_name': 'mysql adapter',
+        'age': 2
+    })
+    .into('person')
+    .parse();
+
+    // INSERT INTO person (`full_name`, `age`) VALUES ("mysql adapter", 2);
+```
+
 ### SELECT
 ```javascript
 import { QueryBuilder, QueryCriteria } from 'stackerjs-db-mysql-adapter';
@@ -33,4 +50,37 @@ let criteria = new QueryCriteria(),
 
     // SELECT `person`.`id`, `person`.`full_name` AS name, `person`.`age` FROM person
     // WHERE (`active` = 1 AND `age` >= 18 AND `name` LIKE "%george%");
+```
+
+### UPDATE
+```javascript
+import { QueryBuilder } from 'stackerjs-db-mysql-adapter';
+
+let query = new QueryBuilder()
+    .update()
+    .set({
+        'full_name': 'still mysql adapter'
+    })
+    .into('person')
+    .where({
+        'id': 1
+    })
+    .parse();
+
+    // UPDATE person SET `full_name` = "still mysql adapter" WHERE `id` = 1;
+```
+
+### DELETE
+```javascript
+import { QueryBuilder } from 'stackerjs-db-mysql-adapter';
+
+let query = new QueryBuilder()
+    .delete()
+    .into('person')
+    .where({
+        'id': 1
+    })
+    .parse();
+
+    // DELETE FROM person WHERE `id` = 1;    
 ```
