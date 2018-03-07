@@ -91,5 +91,5 @@ You can build filters using String, Object or QueryCriteria class
 
 | Comparision | String | Object | Query Criteria |
 | --- | --- | --- | --- |
-| Equal | field = value | { field: value } || { field: [ 'eq': value ] } || { field: { 'eq': value } } | new QueryCriteria.eq(field, value) |
-| Non equal | field <> value | { field: [ 'neq': value ] } || { field: { 'neq': value } } | new QueryCriteria.neq(field, value) |
+| Equal | field = value | { field: value } or { field: [ 'eq': value ] } or { field: { 'eq': value } } | new QueryCriteria.eq(field, value) |
+| Non equal | field <> value | { field: [ 'neq': value ] } or { field: { 'neq': value } } | new QueryCriteria.neq(field, value) |
