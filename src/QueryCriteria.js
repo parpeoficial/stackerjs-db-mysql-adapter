@@ -13,11 +13,17 @@ export class QueryCriteria
 
     eq(field, value)
     {
+        if (!value)
+            return `${parseFieldAndTable(field)} IS NULL`;
+
         return `${parseFieldAndTable(field)} = ${treatValue(value)}`;
     }
 
     neq(field, value)
     {
+        if (!value)
+            return `${parseFieldAndTable(field)} IS NOT NULL`;
+
         return `${parseFieldAndTable(field)} <> ${treatValue(value)}`;
     }
 
@@ -70,7 +76,12 @@ export class QueryCriteria
 
     intersectIn(field, value, not = false)
     {
-        return `${parseFieldAndTable(field)} ${not ? "NOT" : ""} IN (${value.map(v => treatValue(v)).join(', ')})`;
+        if (Array.isArray(value))
+            value = `(${value.map(v => treatValue(v)).join(', ')})`;
+        else if (typeof value === 'object' && typeof value.parse === 'function')
+            value = treatValue(value);
+
+        return `${parseFieldAndTable(field)} ${not ? "NOT" : ""} IN ${value}`;
     }
 
 }
