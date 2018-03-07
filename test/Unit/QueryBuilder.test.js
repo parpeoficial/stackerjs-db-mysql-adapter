@@ -231,10 +231,11 @@ describe('Unit/QueryBuilderTest', () =>
                 .set('*')
                 .where(criteria.andX(
                     criteria.eq('active', 1),
-                    criteria.like('first_name', 'other')
+                    criteria.like('first_name', 'other'),
+                    criteria.eq('extra', null)
                 ))
                 .execute()
-                .then(results => expect(results).to.be.lengthOf(1))
+                .then(results => expect(results).to.be.lengthOf(0))
                 .then(() => done());
         });
 
@@ -246,7 +247,8 @@ describe('Unit/QueryBuilderTest', () =>
                 .from('user_messages')
                 .where({
                     'sender_id': {
-                        'in': new QueryBuilder().select().set('id').from('user')
+                        'in': new QueryBuilder().select().set('id').from('user'),
+                        'neq': null
                     }
                 })
                 .execute()

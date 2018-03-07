@@ -36,7 +36,7 @@ const padString = (text, desiredSize, completeWith = '0') =>
 
 export const treatValue = value =>
 {
-    if (typeof value.parse === 'function')
+    if (value && typeof value.parse === 'function')
         return `(${value.parse().slice(0, -1)})`;
 
     if (value instanceof Date)

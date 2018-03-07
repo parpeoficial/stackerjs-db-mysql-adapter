@@ -13,11 +13,17 @@ export class QueryCriteria
 
     eq(field, value)
     {
+        if (!value)
+            return `${parseFieldAndTable(field)} IS NULL`;
+
         return `${parseFieldAndTable(field)} = ${treatValue(value)}`;
     }
 
     neq(field, value)
     {
+        if (!value)
+            return `${parseFieldAndTable(field)} IS NOT NULL`;
+
         return `${parseFieldAndTable(field)} <> ${treatValue(value)}`;
     }
 

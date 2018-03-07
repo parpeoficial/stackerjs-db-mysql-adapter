@@ -12,9 +12,9 @@
 # Database: MySQL Adapter
 An MySQL adapter for StackerJS apps with ORM interacting with MySQL databases.
 
-## Usage
+## QueryBuilder
 
-### INSERT
+### Insert
 ```javascript
 import { QueryBuilder } from 'stackerjs-db-mysql-adapter';
 
@@ -30,7 +30,7 @@ let query = new QueryBuilder()
     // INSERT INTO person (`full_name`, `age`) VALUES ("mysql adapter", 2);
 ```
 
-### SELECT
+### Select
 ```javascript
 import { QueryBuilder, QueryCriteria } from 'stackerjs-db-mysql-adapter';
 
@@ -52,7 +52,7 @@ let criteria = new QueryCriteria(),
     // WHERE (`active` = 1 AND `age` >= 18 AND `name` LIKE "%george%");
 ```
 
-### UPDATE
+### Update
 ```javascript
 import { QueryBuilder } from 'stackerjs-db-mysql-adapter';
 
@@ -70,7 +70,7 @@ let query = new QueryBuilder()
     // UPDATE person SET `full_name` = "still mysql adapter" WHERE `id` = 1;
 ```
 
-### DELETE
+### Delete
 ```javascript
 import { QueryBuilder } from 'stackerjs-db-mysql-adapter';
 
@@ -84,3 +84,12 @@ let query = new QueryBuilder()
 
     // DELETE FROM person WHERE `id` = 1;    
 ```
+
+
+## Filtering
+You can build filters using String, Object or QueryCriteria class
+
+| Comparision | String | Object | Query Criteria |
+| --- | --- | --- | --- |
+| Equal | field = value | { field: value } || { field: [ 'eq': value ] } || { field: { 'eq': value } } | new QueryCriteria.eq(field, value) |
+| Non equal | field <> value | { field: [ 'neq': value ] } || { field: { 'neq': value } } | new QueryCriteria.neq(field, value) |
