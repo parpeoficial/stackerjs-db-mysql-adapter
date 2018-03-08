@@ -1,17 +1,19 @@
-import { QueryBuilderQueries } from './QueryBuilderQueries';
+import { QueryBuilderQueries } from "./QueryBuilderQueries";
 
-
-export class QueryBuilderInsert extends QueryBuilderQueries
+export class QueryBuilderInsert extends QueryBuilderQueries 
 {
-
-    parse()
+    parse() 
     {
-        return `INSERT INTO ${this.tableName} (` +
-            Object.keys(this.fields).map(field => field).join(', ') +
-        ') VALUES (' +
+        return (
+            `INSERT INTO ${this.tableName} (` +
             Object.keys(this.fields)
-                .map(field => this.fields[field]).join(', ') + 
-        ');';
+                .map(field => field)
+                .join(", ") +
+            ") VALUES (" +
+            Object.keys(this.fields)
+                .map(field => this.fields[field])
+                .join(", ") +
+            ");"
+        );
     }
-
 }

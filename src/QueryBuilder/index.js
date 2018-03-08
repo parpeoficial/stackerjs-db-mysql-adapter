@@ -1,36 +1,33 @@
-import { QueryBuilderInsert } from './QueryBuilderInsert';
-import { QueryBuilderUpdate } from './QueryBuilderUpdate';
-import { QueryBuilderDelete } from './QueryBuilderDelete';
-import { QueryBuilderSelect } from './QueryBuilderSelect';
-import { QueryBuilderTable } from './QueryBuilderTable';
+import { QueryBuilderInsert } from "./QueryBuilderInsert";
+import { QueryBuilderUpdate } from "./QueryBuilderUpdate";
+import { QueryBuilderDelete } from "./QueryBuilderDelete";
+import { QueryBuilderSelect } from "./QueryBuilderSelect";
+import { QueryBuilderTable } from "./QueryBuilderTable";
 
-
-export class QueryBuilder
+export class QueryBuilder 
 {
-
-    table()
+    table() 
     {
         return new QueryBuilderTable();
     }
 
-    insert()
+    insert() 
     {
         return new QueryBuilderInsert();
     }
 
-    update()
+    update() 
     {
         return new QueryBuilderUpdate();
     }
 
-    delete()
+    delete() 
     {
         return new QueryBuilderDelete();
     }
 
-    select()
+    select() 
     {
         return new QueryBuilderSelect();
     }
-
 }

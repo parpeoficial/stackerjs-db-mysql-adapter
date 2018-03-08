@@ -1,14 +1,13 @@
 import { QueryBuilderQueries } from "./QueryBuilderQueries";
 
-
-export class QueryBuilderDelete extends QueryBuilderQueries
+export class QueryBuilderDelete extends QueryBuilderQueries 
 {
-
-    parse()
+    parse() 
     {
-        return `DELETE FROM ${this.tableName}` +
-            (this._where ? ` WHERE ${this._where}` : '') +
-            ';';
+        return (
+            `DELETE FROM ${this.tableName}` +
+            (this._where ? ` WHERE ${this._where}` : "") +
+            ";"
+        );
     }
-
 }

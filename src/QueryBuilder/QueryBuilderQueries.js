@@ -1,10 +1,8 @@
 import { parseFilters, parseFieldAndTable, treatValue } from "../Utils";
 import { Connection } from "../Connection";
 
-
-export class QueryBuilderQueries
+export class QueryBuilderQueries 
 {
-
     constructor() 
     {
         this.tableName;
@@ -12,44 +10,41 @@ export class QueryBuilderQueries
         this._where;
     }
 
-    into(tableName)
+    into(tableName) 
     {
         this.tableName = tableName;
         return this;
     }
 
-    from(tableName)
+    from(tableName) 
     {
         return this.into(tableName);
     }
 
-    set(fields, value=null)
+    set(fields, value = null) 
     {
-        if (typeof fields === 'object')
-            Object.keys(fields)
-                .map((field) => this.set(field, fields[field]));
-        
-        if (typeof fields === 'string')
+        if (typeof fields === "object")
+            Object.keys(fields).map(field => this.set(field, fields[field]));
+
+        if (typeof fields === "string")
             this.fields[parseFieldAndTable(fields)] = this.treatValue(value);
 
         return this;
     }
 
-    where(where)
+    where(where) 
     {
         this._where = parseFilters(where);
         return this;
     }
 
-    treatValue(value, treatString = true)
+    treatValue(value, treatString = true) 
     {
         return treatValue(value, treatString);
     }
 
-    execute()
+    execute() 
     {
-        return new Connection()
-            .query(this.parse());
+        return new Connection().query(this.parse());
     }
-
 }

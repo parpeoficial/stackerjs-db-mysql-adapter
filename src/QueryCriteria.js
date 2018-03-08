@@ -1,87 +1,81 @@
-import { QueryBuilderQueries } from './QueryBuilder/QueryBuilderQueries';
-import { treatValue, parseFieldAndTable } from './Utils';
+import { treatValue, parseFieldAndTable } from "./Utils";
 
-
-export class QueryCriteria
+export class QueryCriteria 
 {
-
-    like(field, value)
+    like(field, value) 
     {
-        value = value.indexOf('%') >= 0 ? value : treatValue(`%${value}%`);
-        return `${parseFieldAndTable(field)} LIKE ${value}`;   
+        value = value.indexOf("%") >= 0 ? value : treatValue(`%${value}%`);
+        return `${parseFieldAndTable(field)} LIKE ${value}`;
     }
 
-    eq(field, value)
+    eq(field, value) 
     {
-        if (!value)
-            return `${parseFieldAndTable(field)} IS NULL`;
+        if (!value) return `${parseFieldAndTable(field)} IS NULL`;
 
         return `${parseFieldAndTable(field)} = ${treatValue(value)}`;
     }
 
-    neq(field, value)
+    neq(field, value) 
     {
-        if (!value)
-            return `${parseFieldAndTable(field)} IS NOT NULL`;
+        if (!value) return `${parseFieldAndTable(field)} IS NOT NULL`;
 
         return `${parseFieldAndTable(field)} <> ${treatValue(value)}`;
     }
 
-    lt(field, value)
+    lt(field, value) 
     {
         return `${parseFieldAndTable(field)} < ${treatValue(value)}`;
     }
 
-    lte(field, value)
+    lte(field, value) 
     {
         return `${parseFieldAndTable(field)} <= ${treatValue(value)}`;
     }
 
-    gt(field, value)
+    gt(field, value) 
     {
         return `${parseFieldAndTable(field)} > ${treatValue(value)}`;
     }
 
-    gte(field, value)
+    gte(field, value) 
     {
         return `${parseFieldAndTable(field)} >= ${treatValue(value)}`;
     }
 
-    in(field, value)
+    in(field, value) 
     {
         return this.intersectIn(field, value);
     }
 
-    notin(field, value)
+    notin(field, value) 
     {
         return this.intersectIn(field, value, true);
     }
 
     andX() 
     {
-        return `(${this.intersect(arguments, 'AND')})`;
+        return `(${this.intersect(arguments, "AND")})`;
     }
 
     orX() 
     {
-        return `(${this.intersect(arguments, 'OR')})`;
+        return `(${this.intersect(arguments, "OR")})`;
     }
 
-    intersect(whatToInsersect, intersectWith)
+    intersect(whatToInsersect, intersectWith) 
     {
         return Object.keys(whatToInsersect)
             .map(key => whatToInsersect[key])
-            .join(` ${intersectWith.trim()} `)
+            .join(` ${intersectWith.trim()} `);
     }
 
-    intersectIn(field, value, not = false)
+    intersectIn(field, value, not = false) 
     {
         if (Array.isArray(value))
-            value = `(${value.map(v => treatValue(v)).join(', ')})`;
-        else if (typeof value === 'object' && typeof value.parse === 'function')
+            value = `(${value.map(v => treatValue(v)).join(", ")})`;
+        else if (typeof value === "object" && typeof value.parse === "function")
             value = treatValue(value);
 
         return `${parseFieldAndTable(field)} ${not ? "NOT" : ""} IN ${value}`;
     }
-
 }
