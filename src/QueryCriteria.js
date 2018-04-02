@@ -73,7 +73,8 @@ export class QueryCriteria
     {
         if (Array.isArray(value))
             value = `(${value.map(v => treatValue(v)).join(", ")})`;
-        else if (typeof value === "object" && typeof value.parse === "function")
+
+        if (typeof value === "object" && typeof value.parse === "function")
             value = treatValue(value);
 
         return `${parseFieldAndTable(field)} ${not ? "NOT" : ""} IN ${value}`;

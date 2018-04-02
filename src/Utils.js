@@ -12,13 +12,13 @@ const parseDateToDateTimeString = value =>
         [
             value.getFullYear(),
             padString((value.getMonth() + 1).toString(), 2),
-            padString(value.getDate().toString(), 2)
+            padString(value.getDate().toString(), 2),
         ].join("-"),
         [
             padString(value.getHours().toString(), 2),
             padString(value.getMinutes().toString(), 2),
-            padString(value.getSeconds().toString(), 2)
-        ].join(":")
+            padString(value.getSeconds().toString(), 2),
+        ].join(":"),
     ].join(" ");
 
 const padString = (text, desiredSize, completeWith = "0") => 
@@ -38,13 +38,13 @@ export const treatValue = value =>
     if (value && typeof value.parse === "function")
         return `(${value.parse().slice(0, -1)})`;
 
-    let regexIsFunction = /[a-zA-Z\_]+\((.*?)\)/;
+    let regexIsFunction = /[a-zA-Z_]+\((.*?)\)/;
     if (regexIsFunction.test(value)) return value;
 
     if (value instanceof Date) value = parseDateToDateTimeString(value);
 
     if (Array.isArray(value) || typeof value === "object")
-        value = JSON.stringify(value);
+        return `'${JSON.stringify(value)}'`;
 
     return escape(value);
 };
@@ -56,9 +56,7 @@ export const parseFieldAndTable = (fieldName, tableName) =>
     if (DETECT_FIELD_IS_JSON.test(fieldName)) return fieldName;
 
     if (DETECT_FIELD_IS_PARSED_JSON.test(fieldName))
-        return (fields => `${fields.splice(0, 1)}->"$.${fields.join(".")}"`)(
-            fieldName.split("->")
-        );
+        return (fields => `${fields.splice(0, 1)}->"$.${fields.join(".")}"`)(fieldName.split("->"));
 
     if (tableName && !DETECT_FIELD_HAS_TABLE.test(fieldName))
         return parseFieldAndTable(`${tableName}.${fieldName}`);

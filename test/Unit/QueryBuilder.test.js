@@ -1,4 +1,5 @@
 import { expect } from "chai";
+import { Config } from "stackerjs-utils";
 import { QueryBuilder, QueryCriteria, Connection } from "./../../lib";
 
 describe("Unit/QueryBuilderTest", () => 
@@ -16,7 +17,7 @@ describe("Unit/QueryBuilderTest", () =>
                     last_name: { type: "varchar", size: 100, required: true },
                     extra: { type: "json" },
                     birthday: { type: "date" },
-                    active: { type: "integer", defaultValue: 0 }
+                    active: { type: "integer", defaultValue: 0 },
                 })
                 .execute()
                 .then(response => expect(response.affectedRows).to.be.equal(0))
@@ -37,8 +38,8 @@ describe("Unit/QueryBuilderTest", () =>
                     sent_at: {
                         type: "datetime",
                         required: true,
-                        defaultValue: "CURRENT_TIMESTAMP"
-                    }
+                        defaultValue: "CURRENT_TIMESTAMP",
+                    },
                 })
                 .execute()
                 .then(response => expect(response.affectedRows).to.be.equal(0))
@@ -68,8 +69,8 @@ describe("Unit/QueryBuilderTest", () =>
                     last_name: "name",
                     extra: {
                         address: { country: "Brazil" },
-                        points: { sender: 10, receiver: 9.5 }
-                    }
+                        points: { sender: 10, receiver: 9.5 },
+                    },
                 })
                 .execute()
                 .then(response => 
@@ -90,7 +91,7 @@ describe("Unit/QueryBuilderTest", () =>
                 .set("birthday", new Date("2017-05-15 09:00:01"))
                 .set("extra", {
                     address: { country: "Portugal" },
-                    points: { sender: 3, receiver: 2.75 }
+                    points: { sender: 3, receiver: 2.75 },
                 })
                 .set("active", true)
                 .execute()
@@ -106,12 +107,11 @@ describe("Unit/QueryBuilderTest", () =>
                 .set({
                     sender_id: 1,
                     receiver_id: 2,
-                    message: "Give me some credit"
+                    message: "Give me some credit",
                 })
                 .execute()
                 .then(response =>
-                    expect(response.lastInsertedId).to.be.equal(1)
-                )
+                    expect(response.lastInsertedId).to.be.equal(1))
                 .then(() => done());
         });
     });
@@ -121,14 +121,12 @@ describe("Unit/QueryBuilderTest", () =>
         it("Should insert multiple data", done => 
         {
             new Connection()
-                .query(
-                    "INSERT INTO user_messages (sender_id, receiver_id, message) VALUES " +
+                .query("INSERT INTO user_messages (sender_id, receiver_id, message) VALUES " +
                         "(1, 2, \"Hello\")," +
                         "(2, 1, \"Hello man\")," +
                         "(1, 2, \"u okay ?\")," +
                         "(2, 1, \"yea, and u ?\")," +
-                        "(1, 2, \"eveything good\")"
-                )
+                        "(1, 2, \"eveything good\")")
                 .then(() => done());
         });
 
@@ -139,7 +137,7 @@ describe("Unit/QueryBuilderTest", () =>
                 .from("user")
                 .set([
                     "CONCAT(LOWER(user.first_name), \" \", user.last_name)",
-                    "full_name"
+                    "full_name",
                 ])
                 .execute()
                 .then(results => 
@@ -160,7 +158,7 @@ describe("Unit/QueryBuilderTest", () =>
                 .where({
                     "UPPER(last_name)": { eq: "UPPER(\"person\")" },
                     active: true,
-                    "extra->address->country": ["like", "\"%tugal%\""]
+                    "extra->address->country": ["like", "\"%tugal%\""],
                 })
                 .execute()
                 .then(results => 
@@ -198,12 +196,10 @@ describe("Unit/QueryBuilderTest", () =>
                 .select()
                 .set("*")
                 .from("user_messages")
-                .where(
-                    criteria.andX(
-                        criteria.in("sender_id", [2]),
-                        criteria.notin("sender_id", [1])
-                    )
-                )
+                .where(criteria.andX(
+                    criteria.in("sender_id", [2]),
+                    criteria.notin("sender_id", [1])
+                ))
                 .execute()
                 .then(results => expect(results).to.be.lengthOf(2))
                 .then(() => done());
@@ -231,8 +227,7 @@ describe("Unit/QueryBuilderTest", () =>
                 .offset(1)
                 .execute()
                 .then(response =>
-                    expect(response[0].name).to.be.equal("Another")
-                )
+                    expect(response[0].name).to.be.equal("Another"))
                 .then(() => done());
         });
 
@@ -255,13 +250,11 @@ describe("Unit/QueryBuilderTest", () =>
                 .select()
                 .from("user")
                 .set("*")
-                .where(
-                    criteria.andX(
-                        criteria.eq("active", 1),
-                        criteria.like("first_name", "other"),
-                        criteria.eq("extra", null)
-                    )
-                )
+                .where(criteria.andX(
+                    criteria.eq("active", 1),
+                    criteria.like("first_name", "other"),
+                    criteria.eq("extra", null)
+                ))
                 .execute()
                 .then(results => expect(results).to.be.lengthOf(0))
                 .then(() => done());
@@ -269,6 +262,7 @@ describe("Unit/QueryBuilderTest", () =>
 
         it("Should execute subquery", done => 
         {
+            Config.set("db.log", true);
             new QueryBuilder()
                 .select()
                 .set("*")
@@ -279,8 +273,8 @@ describe("Unit/QueryBuilderTest", () =>
                             .select()
                             .set("id")
                             .from("user"),
-                        neq: null
-                    }
+                        neq: null,
+                    },
                 })
                 .execute()
                 .then(results => expect(results).to.be.lengthOf(6))
@@ -340,12 +334,10 @@ describe("Unit/QueryBuilderTest", () =>
                 .into("user")
                 .set("active", true)
                 .set("extra", null)
-                .where(
-                    criteria.andX(
-                        criteria.gt("extra->points->sender", 6),
-                        criteria.lt("extra->points->sender", 11)
-                    )
-                )
+                .where(criteria.andX(
+                    criteria.gt("extra->points->sender", 6),
+                    criteria.lt("extra->points->sender", 11)
+                ))
                 .execute()
                 .then(response => expect(response.changedRows).to.be.equal(1))
                 .then(() => done());
@@ -370,9 +362,7 @@ describe("Unit/QueryBuilderTest", () =>
             new QueryBuilder()
                 .delete()
                 .from("user")
-                .where(
-                    criteria.orX(criteria.gte("id", 2), criteria.lte("id", 0))
-                )
+                .where(criteria.orX(criteria.gte("id", 2), criteria.lte("id", 0)))
                 .execute()
                 .then(response => expect(response.affectedRows).to.be.equal(1))
                 .then(() => done());

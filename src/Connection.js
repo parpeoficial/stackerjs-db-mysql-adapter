@@ -11,7 +11,7 @@ export class Connection
             host: Config.get("db.host"),
             name: Config.get("db.name"),
             user: Config.get("db.user"),
-            pass: Config.get("db.pass")
+            pass: Config.get("db.pass"),
         };
     }
 
@@ -21,6 +21,8 @@ export class Connection
 
         return new Promise((resolve, reject) => 
         {
+            if (Config.get("db.log")) console.log(query);
+
             this.conn.query(query, parameters, (err, result) => 
             {
                 this.disconnect();
@@ -35,7 +37,7 @@ export class Connection
             return {
                 affectedRows: result.affectedRows,
                 changedRows: result.changedRows,
-                lastInsertedId: result.insertId
+                lastInsertedId: result.insertId,
             };
         });
     }
@@ -52,7 +54,7 @@ export class Connection
             host,
             database: name,
             user,
-            password: pass
+            password: pass,
         });
 
         this.conn.connect();
