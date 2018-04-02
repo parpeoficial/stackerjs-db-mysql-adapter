@@ -1,7 +1,6 @@
-import { QueryBuilder } from './QueryBuilder/index';
-import { QueryCriteria } from './QueryCriteria';
-import { Connection } from './Connection';
-
+import { QueryBuilder } from "./QueryBuilder/index";
+import { QueryCriteria } from "./QueryCriteria";
+import { Connection } from "./Connection";
 
 exports.QueryBuilder = QueryBuilder;
 

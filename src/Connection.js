@@ -1,73 +1,69 @@
-import mysql from 'mysql';
-import { Config } from 'stackerjs-utils';
+import mysql from "mysql";
+import { Config } from "stackerjs-utils";
 
-
-export class Connection
+export class Connection 
 {
-
-    constructor()
+    constructor() 
     {
         this.conn;
 
         this.parameters = {
-            'host': Config.get('db.host'),
-            'name': Config.get('db.name'),
-            'user': Config.get('db.user'),
-            'pass': Config.get('db.pass'),
-        }
+            host: Config.get("db.host"),
+            name: Config.get("db.name"),
+            user: Config.get("db.user"),
+            pass: Config.get("db.pass"),
+        };
     }
 
-    query(query, parameters = [])
+    query(query, parameters = []) 
     {
-        if (!this.isConnected())
-            this.connect();
+        if (!this.isConnected()) this.connect();
 
         return new Promise((resolve, reject) => 
         {
-            this.conn.query(query, parameters, (err, result) => {
+            if (Config.get("db.log")) console.log(query);
+
+            this.conn.query(query, parameters, (err, result) => 
+            {
                 this.disconnect();
-                if (err)
-                    return reject(err);
+                if (err) return reject(err);
 
                 resolve(result);
             });
-        })
-        .then(result => {
-            if (Array.isArray(result))
-                return result;
+        }).then(result => 
+        {
+            if (Array.isArray(result)) return result;
 
             return {
-                'affectedRows': result.affectedRows,
-                'changedRows': result.changedRows,
-                'lastInsertedId': result.insertId
-            }
+                affectedRows: result.affectedRows,
+                changedRows: result.changedRows,
+                lastInsertedId: result.insertId,
+            };
         });
     }
 
-    isConnected()
+    isConnected() 
     {
         return this.conn && !this.conn._closed;
     }
 
-    connect()
+    connect() 
     {
         let { host, name, user, pass } = this.parameters;
         this.conn = mysql.createConnection({
             host,
-            'database': name,
+            database: name,
             user,
-            'password': pass
+            password: pass,
         });
 
         this.conn.connect();
     }
 
-    disconnect()
+    disconnect() 
     {
-        if (this.conn)
-            this.conn.destroy();
-            
+        if (this.conn) this.conn.destroy();
+
         this.conn = null;
     }
-
 }
