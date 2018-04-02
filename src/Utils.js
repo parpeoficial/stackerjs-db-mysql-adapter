@@ -44,7 +44,7 @@ export const treatValue = value =>
     if (value instanceof Date) value = parseDateToDateTimeString(value);
 
     if (Array.isArray(value) || typeof value === "object")
-        return `'${JSON.stringify(value)}'`;
+        value = JSON.stringify(value);
 
     return escape(value);
 };
