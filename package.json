@@ -14,7 +14,8 @@
     "dependencies": {
         "babel-polyfill": "^6.26.0",
         "mysql": "^2.15.0",
-        "stackerjs-types": "^1.0.12",
+        "stackerjs-db": "^1.0.1",
+        "stackerjs-types": "^1.0.13",
         "stackerjs-utils": "^1.0.5"
     },
     "devDependencies": {
@@ -28,9 +29,17 @@
         "nyc": "^11.6.0"
     },
     "nyc": {
-        "exclude": ["lib"],
-        "require": ["babel-register", "babel-polyfill"],
-        "reporter": ["lcov", "text"]
+        "exclude": [
+            "lib"
+        ],
+        "require": [
+            "babel-register",
+            "babel-polyfill"
+        ],
+        "reporter": [
+            "lcov",
+            "text"
+        ]
     },
     "scripts": {
         "build": "./node_modules/.bin/babel src -d lib",

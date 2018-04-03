@@ -120,14 +120,12 @@ describe("Unit/QueryBuilderTest", () =>
     {
         it("Should insert multiple data", done => 
         {
-            new Connection()
-                .query("INSERT INTO user_messages (sender_id, receiver_id, message) VALUES " +
-                        "(1, 2, \"Hello\")," +
-                        "(2, 1, \"Hello man\")," +
-                        "(1, 2, \"u okay ?\")," +
-                        "(2, 1, \"yea, and u ?\")," +
-                        "(1, 2, \"eveything good\")")
-                .then(() => done());
+            Connection.query("INSERT INTO user_messages (sender_id, receiver_id, message) VALUES " +
+                    "(1, 2, \"Hello\")," +
+                    "(2, 1, \"Hello man\")," +
+                    "(1, 2, \"u okay ?\")," +
+                    "(2, 1, \"yea, and u ?\")," +
+                    "(1, 2, \"eveything good\")").then(() => done());
         });
 
         it("Should select selecting field using alias", done => 
@@ -392,4 +390,6 @@ describe("Unit/QueryBuilderTest", () =>
                 .then(() => done());
         });
     });
+
+    after(() => Connection.disconnect());
 });

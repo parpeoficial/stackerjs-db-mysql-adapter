@@ -1,13 +1,15 @@
 import { expect } from "chai";
 import { Connection } from "./../../lib";
 
-describe("Unit/ConnectionTest", () => 
+describe("Unit/ConnectionTest", function() 
 {
+    const conn = Connection;
+
+    this.timeout(40000);
+    before(() => conn.query("DROP TABLE IF EXISTS stackerjs;"));
+
     describe("Executing queries", () => 
     {
-        const conn = new Connection();
-        before(() => conn.connect());
-
         it("Should create", done => 
         {
             conn
@@ -24,9 +26,7 @@ describe("Unit/ConnectionTest", () =>
         it("Should execute an INSERT query", done => 
         {
             conn
-                .query(
-                    "INSERT INTO stackerjs VALUES (\"stackerjs-db\"), (\"stackerjs\"), (\"stackerjs-http\"), (\"stackerjs-utils\");"
-                )
+                .query("INSERT INTO stackerjs VALUES (\"stackerjs-db\"), (\"stackerjs\"), (\"stackerjs-http\"), (\"stackerjs-utils\");")
                 .then(response => 
                 {
                     expect(response.affectedRows).to.be.equal(4);
@@ -44,6 +44,12 @@ describe("Unit/ConnectionTest", () =>
                     expect(results).to.be.lengthOf(4);
                 })
                 .then(() => done());
+        });
+
+        it("Should test massive queries", done => 
+        {
+            Promise.all(Array.from(Array(1000).keys()).map(item =>
+                conn.query(`INSERT INTO stackerjs VALUES ('${item.toString()}');`))).then(() => done());
         });
 
         it("Should drop", done => 
@@ -67,8 +73,7 @@ describe("Unit/ConnectionTest", () =>
                     expect(() => 
                     {
                         throw err;
-                    }).to.throw()
-                )
+                    }).to.throw())
                 .then(() => done());
         });
 

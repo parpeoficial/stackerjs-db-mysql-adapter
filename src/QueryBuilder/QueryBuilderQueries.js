@@ -45,6 +45,6 @@ export class QueryBuilderQueries
 
     execute() 
     {
-        return new Connection().query(this.parse());
+        return Connection.query(this.parse());
     }
 }
