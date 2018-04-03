@@ -1,6 +1,6 @@
 {
     "name": "stackerjs-db-mysql-adapter",
-    "version": "1.0.8",
+    "version": "1.0.9",
     "author": {
         "name": "Vinicius Guedes",
         "email": "viniciusgued@gmail.com",
@@ -29,17 +29,9 @@
         "nyc": "^11.6.0"
     },
     "nyc": {
-        "exclude": [
-            "lib"
-        ],
-        "require": [
-            "babel-register",
-            "babel-polyfill"
-        ],
-        "reporter": [
-            "lcov",
-            "text"
-        ]
+        "exclude": ["lib"],
+        "require": ["babel-register", "babel-polyfill"],
+        "reporter": ["lcov", "text"]
     },
     "scripts": {
         "build": "./node_modules/.bin/babel src -d lib",
