@@ -33,7 +33,7 @@ const padString = (text, desiredSize, completeWith = "0") =>
 
 export const treatValue = value => 
 {
-    if (!value) return "NULL";
+    if (typeof value === "undefined" || value === null) return "NULL";
 
     if (value && typeof value.parse === "function")
         return `(${value.parse().slice(0, -1)})`;
