@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { Config } from "stackerjs-utils";
-import { QueryBuilder, QueryCriteria, Connection } from "./../../lib";
+import { QueryBuilder, QueryCriteria, Connection } from "./../../index";
 
 describe("Unit/QueryBuilderTest", () => 
 {
@@ -17,7 +17,7 @@ describe("Unit/QueryBuilderTest", () =>
                     last_name: { type: "varchar", size: 100, required: true },
                     extra: { type: "json" },
                     birthday: { type: "date" },
-                    active: { type: "integer", defaultValue: 0 },
+                    active: { type: "integer", defaultValue: 0 }
                 })
                 .execute()
                 .then(response => expect(response.affectedRows).to.be.equal(0))
@@ -38,8 +38,8 @@ describe("Unit/QueryBuilderTest", () =>
                     sent_at: {
                         type: "datetime",
                         required: true,
-                        defaultValue: "CURRENT_TIMESTAMP",
-                    },
+                        defaultValue: "CURRENT_TIMESTAMP"
+                    }
                 })
                 .execute()
                 .then(response => expect(response.affectedRows).to.be.equal(0))
@@ -69,8 +69,8 @@ describe("Unit/QueryBuilderTest", () =>
                     last_name: "name",
                     extra: {
                         address: { country: "Brazil" },
-                        points: { sender: 10, receiver: 9.5 },
-                    },
+                        points: { sender: 10, receiver: 9.5 }
+                    }
                 })
                 .execute()
                 .then(response => 
@@ -91,7 +91,7 @@ describe("Unit/QueryBuilderTest", () =>
                 .set("birthday", new Date("2017-05-15 09:00:01"))
                 .set("extra", {
                     address: { country: "Portugal" },
-                    points: { sender: 3, receiver: 2.75 },
+                    points: { sender: 3, receiver: 2.75 }
                 })
                 .set("active", true)
                 .execute()
@@ -107,7 +107,7 @@ describe("Unit/QueryBuilderTest", () =>
                 .set({
                     sender_id: 1,
                     receiver_id: 2,
-                    message: "Give me some credit",
+                    message: "Give me some credit"
                 })
                 .execute()
                 .then(response =>
@@ -135,7 +135,7 @@ describe("Unit/QueryBuilderTest", () =>
                 .from("user")
                 .set([
                     "CONCAT(LOWER(user.first_name), \" \", user.last_name)",
-                    "full_name",
+                    "full_name"
                 ])
                 .execute()
                 .then(results => 
@@ -156,7 +156,7 @@ describe("Unit/QueryBuilderTest", () =>
                 .where({
                     "UPPER(last_name)": { eq: "UPPER(\"person\")" },
                     active: true,
-                    "extra->address->country": ["like", "\"%tugal%\""],
+                    "extra->address->country": ["like", "\"%tugal%\""]
                 })
                 .execute()
                 .then(results => 
@@ -271,8 +271,8 @@ describe("Unit/QueryBuilderTest", () =>
                             .select()
                             .set("id")
                             .from("user"),
-                        neq: null,
-                    },
+                        neq: null
+                    }
                 })
                 .execute()
                 .then(results => expect(results).to.be.lengthOf(6))

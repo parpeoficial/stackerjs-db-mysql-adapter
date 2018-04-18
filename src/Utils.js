@@ -1,7 +1,7 @@
 import { escape } from "mysql";
 import { QueryCriteria } from "./index";
 
-const DETECT_FIELD_IS_WRAPPED_BY_FUNCTION = /\([a-z0-9\-._'*]+\)/,
+const DETECT_FIELD_IS_WRAPPED_BY_FUNCTION = /[A-Za-z]+\((.*)\)/,
     DETECT_FIELD_IS_JSON = /[a-z_]+->"\$\.[a-z0-9._]+"/,
     DETECT_FIELD_IS_PARSED_JSON = /[a-zA-Z_]+->/,
     DETECT_FIELD_HAS_TABLE = /[a-z_`]+\.[a-z_`*]+/,
@@ -12,13 +12,13 @@ const parseDateToDateTimeString = value =>
         [
             value.getFullYear(),
             padString((value.getMonth() + 1).toString(), 2),
-            padString(value.getDate().toString(), 2),
+            padString(value.getDate().toString(), 2)
         ].join("-"),
         [
             padString(value.getHours().toString(), 2),
             padString(value.getMinutes().toString(), 2),
-            padString(value.getSeconds().toString(), 2),
-        ].join(":"),
+            padString(value.getSeconds().toString(), 2)
+        ].join(":")
     ].join(" ");
 
 const padString = (text, desiredSize, completeWith = "0") => 
