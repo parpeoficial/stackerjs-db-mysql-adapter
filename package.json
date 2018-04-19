@@ -14,7 +14,6 @@
     "dependencies": {
         "babel-polyfill": "^6.26.0",
         "mysql": "^2.15.0",
-        "stackerjs-db": "^1.0.1",
         "stackerjs-types": "^1.1.0",
         "stackerjs-utils": "^1.0.5"
     },
