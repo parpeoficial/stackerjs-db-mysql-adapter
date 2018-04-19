@@ -1,6 +1,7 @@
 # App files and folders
 /.env
 /.nyc_output
+/config
 /coverage
 /index.js
 /node_modules
