@@ -32,10 +32,28 @@ export class QueryBuilderQueries
         return this;
     }
 
-    where(where) 
+    where(where, type = "AND") 
     {
-        this._where = parseFilters(where);
+        where = parseFilters(where);
+        if (where.substr(0) !== "(")
+            where = `(${where})`;
+
+        if (!this._where)
+            this._where = where;
+        else
+            this._where += ` ${type} ${where}`;
+
         return this;
+    }
+
+    andWhere(where) 
+    {
+        return this.where(where, "AND");
+    }
+
+    orWhere(where) 
+    {
+        return this.where(where, "OR");
     }
 
     treatValue(value, treatString = true) 

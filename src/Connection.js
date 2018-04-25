@@ -26,7 +26,7 @@ export class Connection
             return {
                 affectedRows: result.affectedRows,
                 changedRows: result.changedRows,
-                lastInsertedId: result.insertId,
+                lastInsertedId: result.insertId
             };
         });
     }
@@ -63,6 +63,6 @@ Connection.parameters = {
     host: Config.get("db.host"),
     database: Config.get("db.name"),
     user: Config.get("db.user"),
-    password: Config.get("db.pass"),
+    password: Config.get("db.pass")
 };
 Connection.pool = null;
