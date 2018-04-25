@@ -1,6 +1,6 @@
 {
     "name": "stackerjs-db-mysql-adapter",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "author": {
         "name": "Vinicius Guedes",
         "email": "viniciusgued@gmail.com",
@@ -14,7 +14,7 @@
     "dependencies": {
         "babel-polyfill": "^6.26.0",
         "mysql": "^2.15.0",
-        "stackerjs-types": "^1.1.1",
+        "stackerjs-types": "^1.1.2",
         "stackerjs-utils": "^1.1.3"
     },
     "devDependencies": {
@@ -23,8 +23,15 @@
         "babel-preset-env": "^1.6.1",
         "babel-register": "^6.26.0",
         "chai": "^4.1.2",
+        "lint-staged": "^7.0.4",
         "mocha": "^5.1.1",
         "nyc": "^11.7.1"
+    },
+    "lint-staged": {
+        "*.js": [
+            "npm run lint",
+            "git add ."
+        ]
     },
     "nyc": {
         "exclude": [
@@ -42,6 +49,8 @@
         ]
     },
     "scripts": {
+        "precommit": "./node_modules/.bin/lint-staged",
+        "lint": "eslint src/ test/ --fix",
         "build": "./node_modules/.bin/babel src -d lib",
         "test": "NODE_ENV=dev ./node_modules/.bin/nyc ./node_modules/mocha/bin/_mocha"
     }

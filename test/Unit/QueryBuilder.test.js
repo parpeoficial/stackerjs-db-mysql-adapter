@@ -121,11 +121,11 @@ describe("Unit/QueryBuilderTest", () =>
         it("Should insert multiple data", done => 
         {
             Connection.query("INSERT INTO user_messages (sender_id, receiver_id, message) VALUES " +
-                    "(1, 2, \"Hello\")," +
-                    "(2, 1, \"Hello man\")," +
-                    "(1, 2, \"u okay ?\")," +
-                    "(2, 1, \"yea, and u ?\")," +
-                    "(1, 2, \"eveything good\")").then(() => done());
+                "(1, 2, \"Hello\")," +
+                "(2, 1, \"Hello man\")," +
+                "(1, 2, \"u okay ?\")," +
+                "(2, 1, \"yea, and u ?\")," +
+                "(1, 2, \"eveything good\")").then(() => done());
         });
 
         it("Should select selecting field using alias", done => 
@@ -307,6 +307,20 @@ describe("Unit/QueryBuilderTest", () =>
                     expect(results[0]).to.have.property("sender_points");
                     expect(results[0].sender_points).to.be.equal("10");
                 })
+                .then(() => done());
+        });
+
+        it("Should test AND and OR clauses on queries", done => 
+        {
+            new QueryBuilder()
+                .select()
+                .set("*")
+                .from("user")
+                .where({ active: 1 })
+                .andWhere({ last_name: "person" })
+                .orWhere({ first_name: { neq: "person" } })
+                .execute()
+                .then(results => expect(results).to.be.lengthOf(1))
                 .then(() => done());
         });
     });
