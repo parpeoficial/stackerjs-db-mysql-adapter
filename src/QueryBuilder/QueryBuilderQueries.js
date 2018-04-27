@@ -38,10 +38,13 @@ export class QueryBuilderQueries
         if (where.substr(0) !== "(")
             where = `(${where})`;
 
-        if (!this._where)
-            this._where = where;
-        else
-            this._where += ` ${type} ${where}`;
+        if (where.length) 
+        {
+            if (!this._where)
+                this._where = where;
+            else
+                this._where += ` ${type} ${where}`;
+        }
 
         return this;
     }
