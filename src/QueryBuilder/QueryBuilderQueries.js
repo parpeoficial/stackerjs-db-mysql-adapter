@@ -38,7 +38,7 @@ export class QueryBuilderQueries
         if (where.length && where.substr(0) !== "(")
             where = `(${where})`;
 
-        if (where.length && where !== "()") 
+        if (where !== "()") 
         {
             if (!this._where)
                 this._where = where;
