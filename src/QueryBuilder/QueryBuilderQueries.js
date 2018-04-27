@@ -35,10 +35,10 @@ export class QueryBuilderQueries
     where(where, type = "AND") 
     {
         where = parseFilters(where);
-        if (where.substr(0) !== "(")
+        if (where.length && where.substr(0) !== "(")
             where = `(${where})`;
 
-        if (where.length) 
+        if (where !== "()") 
         {
             if (!this._where)
                 this._where = where;
