@@ -167,6 +167,18 @@ describe("Unit/QueryBuilderTest", () =>
                 .then(() => done());
         });
 
+        it("Should avoid WHERE clause when empty", done => 
+        {
+            new QueryBuilder()
+                .select()
+                .set("*")
+                .from("user")
+                .where({})
+                .execute()
+                .then(results => expect(results).to.be.an("array"))
+                .then(() => done());
+        });
+
         it("Should JOIN queries", done => 
         {
             new QueryBuilder()
