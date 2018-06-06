@@ -1,6 +1,7 @@
 # App files and folders
 /.env
 /.nyc_output
+/cc-test-reporter
 /config
 /coverage
 /index.js

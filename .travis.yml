@@ -1,7 +1,12 @@
 language: node_js
 node_js:
-  - "7"
+  - '9'
+  - '8'
+cache:
+  directories:
+    - ~/.npm
 
+sudo: required
 services:
   - mysql
 
@@ -13,18 +18,14 @@ addons:
       - mysql-server
       - mysql-client
 
-sudo: required
-
 notifications:
   slack: parpe:ypxSy7CvUXYAShDK7C3supzV
+  email: false
 
 before_install:
   - sudo mysql_upgrade
   - sudo service mysql restart
-  - npm install -g codecov istanbul
-
-install:
-  - npm install
+  - npm install -g istanbul babel-cli
 
 before_script:
   - echo DB_HOST = 127.0.0.1 >> .env
@@ -35,19 +36,15 @@ before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
-  - npm run build
-
-script:
-  - npm run test
 
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
   - rm -rf ./cc-test-reporter
 
-deploy:
-  provider: npm
-  email: "admin@parpe.com"
-  api_key: $NPM_TOKEN
-  skip_cleanup: true
-  on:
-    branch: master
+after_success:
+  - npm run build
+  - npm run travis-deploy-once "npm run semantic-release"
+
+branches:
+  except:
+    - /^v\d+\.\d+\.\d+$/

@@ -1,6 +1,6 @@
 {
     "name": "stackerjs-db-mysql-adapter",
-    "version": "1.1.3",
+    "version": "0.0.0-development",
     "author": {
         "name": "Vinicius Guedes",
         "email": "viniciusgued@gmail.com",
@@ -18,8 +18,6 @@
         "stackerjs-utils": "^1.1.3"
     },
     "devDependencies": {
-        "babel-cli": "^6.26.0",
-        "babel-core": "^6.26.0",
         "babel-plugin-istanbul": "^4.1.6",
         "babel-preset-env": "^1.6.1",
         "babel-register": "^6.26.0",
@@ -27,7 +25,9 @@
         "husky": "^0.14.3",
         "lint-staged": "^7.0.4",
         "mocha": "^5.1.1",
-        "nyc": "^11.7.1"
+        "nyc": "^11.7.1",
+        "semantic-release": "^15.5.1",
+        "travis-deploy-once": "^5.0.0"
     },
     "lint-staged": {
         "*.js": [
@@ -53,7 +53,9 @@
     "scripts": {
         "precommit": "./node_modules/.bin/lint-staged",
         "lint": "eslint src/ test/ --fix",
-        "build": "./node_modules/.bin/babel src -d lib",
-        "test": "NODE_ENV=dev ./node_modules/.bin/nyc ./node_modules/mocha/bin/mocha"
+        "build": "babel src -d lib",
+        "test": "NODE_ENV=dev ./node_modules/.bin/nyc ./node_modules/mocha/bin/mocha",
+        "semantic-release": "semantic-release",
+        "travis-deploy-once": "travis-deploy-once"
     }
 }
