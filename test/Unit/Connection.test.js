@@ -12,8 +12,7 @@ describe("Unit/ConnectionTest", function()
     {
         it("Should create", done => 
         {
-            conn
-                .query("CREATE TABLE stackerjs ( name VARCHAR(100) NOT NULL );")
+            conn.query("CREATE TABLE stackerjs ( name VARCHAR(100) NOT NULL );")
                 .then(response => 
                 {
                     expect(response).to.have.property("affectedRows");
@@ -25,8 +24,7 @@ describe("Unit/ConnectionTest", function()
 
         it("Should execute an INSERT query", done => 
         {
-            conn
-                .query("INSERT INTO stackerjs VALUES (\"stackerjs-db\"), (\"stackerjs\"), (\"stackerjs-http\"), (\"stackerjs-utils\");")
+            conn.query("INSERT INTO stackerjs VALUES (\"stackerjs-db\"), (\"stackerjs\"), (\"stackerjs-http\"), (\"stackerjs-utils\");")
                 .then(response => 
                 {
                     expect(response.affectedRows).to.be.equal(4);
@@ -36,8 +34,7 @@ describe("Unit/ConnectionTest", function()
 
         it("Should execute a SELECT query", done => 
         {
-            conn
-                .query("SELECT * FROM stackerjs;")
+            conn.query("SELECT * FROM stackerjs;")
                 .then(results => 
                 {
                     expect(results).to.be.an("Array");
@@ -54,8 +51,7 @@ describe("Unit/ConnectionTest", function()
 
         it("Should drop", done => 
         {
-            conn
-                .query("DROP TABLE stackerjs;")
+            conn.query("DROP TABLE stackerjs;")
                 .then(response => 
                 {
                     expect(response).to.have.property("affectedRows");
@@ -67,8 +63,7 @@ describe("Unit/ConnectionTest", function()
 
         it("Should present error if query is invalid", done => 
         {
-            conn
-                .query("SELECT * FROM invalid_table;")
+            conn.query("SELECT * FROM invalid_table;")
                 .catch(err =>
                     expect(() => 
                     {
