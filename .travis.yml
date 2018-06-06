@@ -25,7 +25,7 @@ notifications:
 before_install:
   - sudo mysql_upgrade
   - sudo service mysql restart
-  - npm install -g codecov istanbul
+  - npm install -g istanbul babel-cli
 
 before_script:
   - echo DB_HOST = 127.0.0.1 >> .env
@@ -36,13 +36,13 @@ before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
-  - npm run build
 
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
   - rm -rf ./cc-test-reporter
 
 after_success:
+  - npm run build
   - npm run travis-deploy-once "npm run semantic-release"
 
 branches:

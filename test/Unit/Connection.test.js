@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { Connection } from "./../../index";
+import { Connection } from "./../../src";
 
 describe("Unit/ConnectionTest", function() 
 {
