@@ -1,18 +1,19 @@
-import mysql from "mysql";
+import mysql from "mysql2";
+import genericPool from "generic-pool";
 import { Config } from "stackerjs-utils";
 
 export class Connection 
 {
     static connect() 
     {
-        this.pool = mysql.createPool(this.parameters);
+        this.pool = genericPool.createPool(this.factory, this.parameters);
         return Promise.resolve(true);
     }
 
     static isConnected() 
     {
         if (!this.pool) return false;
-        return !this.pool._closed;
+        return true;
     }
 
     static query(query, parameters = []) 
@@ -21,16 +22,18 @@ export class Connection
 
         return new Promise((resolve, reject) => 
         {
-            if (Config.get("db.log")) console.log(query);
-            this.pool.getConnection((err, connection) => 
-            {
-                if (err) return reject(err);
-                connection.query(query, parameters, (err, result) => 
+            if (this.parameters.log) console.log(query);
+            this.pool
+                .acquire()
+                .then(connection => 
                 {
-                    connection.release();
-                    return err ? reject(err) : resolve(result);
-                });
-            });
+                    connection.query(query, parameters, (err, result) => 
+                    {
+                        this.pool.release(connection);
+                        return err ? reject(err) : resolve(result);
+                    });
+                })
+                .catch(err => reject(err));
         }).then(result => 
         {
             if (Array.isArray(result)) return result;
@@ -44,29 +47,38 @@ export class Connection
 
     static disconnect() 
     {
-        return new Promise((resolve, reject) => 
+        this.pool.drain().then(() => 
         {
-            if (this.isConnected())
-                this.pool.end(err => 
-                {
-                    if (err) return reject(err);
-                    this.pool = null;
-                    return resolve(true);
-                });
-
-            return resolve(true);
+            this.pool.clear();
+            this.pool = null;
         });
+        return Promise.resolve(true);
     }
 }
 
+Connection.factory = {
+    create: function() 
+    {
+        return mysql.createConnection({
+            host: Config.get("db.host"),
+            database: Config.get("db.name"),
+            user: Config.get("db.user"),
+            password: Config.get("db.pass")
+        });
+    },
+    destroy: function(client) 
+    {
+        client.end();
+    }
+};
+
 Connection.parameters = {
-    host: Config.get("db.host"),
-    database: Config.get("db.name"),
-    user: Config.get("db.user"),
-    password: Config.get("db.pass"),
-    waitForConnections: true,
-    queueLimit: 0,
-    connectionLimit: Config.get("db.connection_limit") || 10
+    evictionRunIntervalMillis:
+        Config.get("db.connection.idle_timeout") || 60000,
+    idleTimeoutMillis: Config.get("db.connection.idle_timeout") || 30000,
+    min: Config.get("db.connection.min") || 2,
+    max: Config.get("db.connection.limit") || 10,
+    log: Config.get("db.log") || false
 };
 
 Connection.pool = null;

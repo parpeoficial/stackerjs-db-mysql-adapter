@@ -1,4 +1,4 @@
-import { escape } from "mysql";
+import { escape } from "mysql2";
 import { QueryCriteria } from "./index";
 
 const DETECT_FIELD_IS_WRAPPED_BY_FUNCTION = /[A-Za-z]+\((.*)\)/,

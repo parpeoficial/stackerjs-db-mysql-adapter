@@ -6,5 +6,10 @@ module.exports = {
     user: Config.env("DB_USER"),
     pass: Config.env("DB_PASS"),
     log: Config.env("DB_LOG", 0),
-    connection_limit: Config.env("DB_CONNECTION_LIMIT")
+    connection: {
+        min: Config.env("DB_CONNECTION_MIN"),
+        limit: Config.env("DB_CONNECTION_LIMIT"),
+        idle_timeout: Config.env("DB_CONNECTION_IDLE_TIMEOUT"),
+        check_interval: Config.env("DB_CONNECTION_CHECK_INTERVAL")
+    }
 };
