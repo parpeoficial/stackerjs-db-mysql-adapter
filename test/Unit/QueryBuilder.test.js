@@ -317,7 +317,7 @@ describe("Unit/QueryBuilderTest", () =>
                 {
                     expect(results).to.be.lengthOf(2);
                     expect(results[0]).to.have.property("sender_points");
-                    expect(results[0].sender_points).to.be.equal("10");
+                    expect(results[0].sender_points).to.be.equal(10);
                 })
                 .then(() => done());
         });

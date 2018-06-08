@@ -45,8 +45,10 @@ describe("Unit/ConnectionTest", function()
 
         it("Should test massive queries", done => 
         {
-            Promise.all(Array.from(Array(1000).keys()).map(item =>
-                conn.query(`INSERT INTO stackerjs VALUES ('${item.toString()}');`))).then(() => done());
+            Promise.all(Array.from(Array(1500).keys()).map(item => 
+            {
+                return conn.query(`INSERT INTO stackerjs VALUES ('${item.toString()}');`);
+            })).then(() => done());
         });
 
         it("Should drop", done => 
